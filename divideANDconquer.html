@@ -1,0 +1,2237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Recursion Trials — Divide &amp; Conquer Oral-Exam Trainer</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700;800&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500;1,600&family=EB+Garamond:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ===== RECURSION TRIALS — CHALKBOARD THEME ===== */
+:root{
+  /* Palette 1 */
+  --coffee-bean: #775A4C;
+  --toffee-brown: #996337;
+  --charcoal: #c4d9fa;
+  --taupe: #8A7E78;
+  --pale-oak: #DFC9A7;
+  --sunlit-clay: #D39E5D;
+  --ivory-mist: #FAF5E3;
+  --faded-copper: #B0835C;
+  --taupe-grey: #635C5D;
+  --tan: #E3BB87;
+
+  /* Palette 2 */
+  --deep-mocha: #4D3D36;
+  --deep-mocha-2: #3A2D28;
+  --soft-fawn: #D8B47F;
+  --faded-copper-2: #8A7159;
+  --toffee-brown-2: #8E5B31;
+  --shadow-grey: #292125;
+  --stone-brown: #554943;
+  --vanilla-custard: #F4E3AC;
+  --pitch-black: #0D0A03;
+  --olive-wood: #876547;
+
+  /* Mapping to Chalk Theme Elements */
+  --board: var(--deep-mocha-2);
+  --board2: var(--deep-mocha);
+  --board-edge: var(--pitch-black);
+  
+  --chalk: var(--ivory-mist);
+  --chalk-dim: var(--pale-oak);
+  --chalk-faint: var(--taupe);
+  
+  --yellow: var(--vanilla-custard);
+  --coral: var(--toffee-brown);
+  --blue: var(--charcoal);
+  --mint: var(--soft-fawn);
+  --violet: var(--faded-copper);
+  
+  --frame: var(--coffee-bean);
+  --frame2: var(--stone-brown);
+
+  --disp:'Cinzel',cursive; --hand:'Cormorant Garamond',cursive; --body:'EB Garamond',system-ui,sans-serif; --mono:'JetBrains Mono',monospace;
+  --r:14px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:var(--body); color:var(--chalk);
+  background:
+    radial-gradient(120% 120% at 50% -10%, var(--stone-brown) 0%, var(--board) 55%, var(--pitch-black) 100%);
+  min-height:100vh; -webkit-font-smoothing:antialiased; overflow-x:hidden;
+}
+/* faint chalk-dust grain over the board */
+body::before{
+  content:""; position:fixed; inset:0; pointer-events:none; z-index:0; opacity:.06;
+  background-image:radial-gradient(rgba(255,255,255,.7) .5px, transparent .6px);
+  background-size:3px 3px;
+}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+a{color:var(--blue)}
+::selection{background:var(--yellow);color:var(--pitch-black)}
+
+/* ---------- HUD ---------- */
+.hud{
+  position:sticky; top:0; z-index:50; display:flex; align-items:center; gap:14px;
+  padding:10px 18px; background:linear-gradient(180deg,rgba(13,10,3,.96),rgba(13,10,3,.82));
+  border-bottom:1px solid rgba(255,255,255,.07); backdrop-filter:blur(6px); flex-wrap:wrap;
+}
+.brand{display:flex;align-items:center;gap:10px;cursor:pointer}
+.brand .mark{font-family:var(--disp);font-size:30px;font-weight:700;color:var(--yellow);line-height:.9;letter-spacing:.5px}
+.brand .mark small{display:block;font-family:var(--body);font-size:9px;letter-spacing:3px;color:var(--chalk-faint);text-transform:uppercase}
+.hud .spacer{flex:1}
+.stat{display:flex;align-items:center;gap:7px;font-size:13px;color:var(--chalk-dim);background:rgba(255,255,255,.04);padding:6px 11px;border-radius:30px;border:1px solid rgba(255,255,255,.06)}
+.stat b{color:var(--chalk);font-weight:600}
+.stat .ic{font-size:15px}
+.xpwrap{display:flex;flex-direction:column;gap:3px;min-width:150px}
+.xpwrap .lvlrow{display:flex;justify-content:space-between;font-size:11px;color:var(--chalk-faint)}
+.xpbar{height:7px;background:rgba(255,255,255,.08);border-radius:6px;overflow:hidden}
+.xpbar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--mint),var(--yellow));border-radius:6px;transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.iconbtn{font-size:13px;color:var(--chalk-dim);padding:6px 10px;border-radius:9px;border:1px solid rgba(255,255,255,.08);background:rgba(255,255,255,.03)}
+.iconbtn:hover{color:var(--chalk);border-color:rgba(255,255,255,.2)}
+
+/* ---------- layout ---------- */
+.wrap{max-width:1040px;margin:0 auto;padding:26px 18px 90px;position:relative;z-index:1}
+.view{animation:fade .4s ease}
+@keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* chalk heading */
+.chalk-h{font-family:var(--disp);font-weight:700;line-height:1;margin:0}
+.h-xl{font-size:clamp(40px,8vw,74px);color:var(--chalk)}
+.h-lg{font-size:clamp(30px,5vw,46px)}
+.h-md{font-size:30px}
+.underline-chalk{display:inline-block;position:relative}
+.underline-chalk::after{content:"";position:absolute;left:-2%;right:-2%;bottom:-6px;height:6px;
+  background:var(--yellow);border-radius:3px;
+  -webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='8'%3E%3Cpath d='M2 5 Q50 1 100 4 T198 4' stroke='black' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat center/100% 100%;
+  mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='8'%3E%3Cpath d='M2 5 Q50 1 100 4 T198 4' stroke='black' stroke-width='5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat center/100% 100%;
+  opacity:.85;}
+
+/* ---------- HOME ---------- */
+.hero{text-align:center;padding:18px 0 8px}
+.hero .eyebrow{font-family:var(--hand);letter-spacing:4px;text-transform:uppercase;color:var(--yellow);font-size:13px;margin-bottom:6px}
+.hero p.lede{max-width:640px;margin:14px auto 0;color:var(--chalk-dim);font-size:16px;line-height:1.6}
+.cta-row{display:flex;gap:12px;justify-content:center;margin-top:22px;flex-wrap:wrap}
+.btn{font-weight:600;font-size:15px;padding:13px 22px;border-radius:12px;transition:transform .12s,box-shadow .2s;border:1px solid transparent}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:linear-gradient(135deg,var(--yellow),var(--sunlit-clay));color:var(--pitch-black);box-shadow:0 6px 0 var(--toffee-brown-2)}
+.btn-primary:hover{box-shadow:0 8px 0 var(--toffee-brown-2), 0 10px 24px rgba(244,227,172,.25);transform:translateY(-2px)}
+.btn-ghost{border-color:rgba(255,255,255,.18);color:var(--chalk);background:rgba(255,255,255,.04)}
+.btn-ghost:hover{border-color:var(--chalk);background:rgba(255,255,255,.08)}
+.btn-sm{font-size:13px;padding:9px 15px;border-radius:10px}
+.btn:disabled{opacity:.4;cursor:not-allowed;box-shadow:none;transform:none}
+
+/* story / companion */
+.dialogue{display:flex;gap:14px;align-items:flex-start;background:rgba(83,86,93,.08);border:1px solid rgba(83,86,93,.25);border-radius:var(--r);padding:14px 16px;margin:22px auto;max-width:760px}
+.dialogue .ava{flex:0 0 auto;width:46px;height:46px;border-radius:50%;display:grid;place-items:center;font-size:26px;background:radial-gradient(circle at 35% 30%,var(--taupe),var(--charcoal));border:1px solid rgba(83,86,93,.4)}
+.dialogue .say{font-size:15px;line-height:1.55;color:var(--chalk)}
+.dialogue .say .who{font-family:var(--hand);color:var(--blue);font-size:14px;letter-spacing:.5px;display:block;margin-bottom:3px}
+
+/* map of chapters */
+.map-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:16px;margin-top:26px}
+.node{position:relative;border-radius:var(--r);padding:18px;border:1px solid rgba(255,255,255,.09);
+  background:linear-gradient(160deg,var(--board2),var(--shadow-grey));overflow:hidden;transition:transform .15s,border-color .2s}
+.node:hover{transform:translateY(-3px);border-color:rgba(255,255,255,.25)}
+.node[data-locked="1"]{opacity:.55}
+.node .rune{font-size:30px}
+.node .ntitle{font-family:var(--disp);font-size:27px;line-height:1;margin:6px 0 2px}
+.node .nsub{font-size:12.5px;color:var(--chalk-faint);min-height:32px}
+.node .tag{display:inline-block;font-size:10.5px;font-family:var(--mono);padding:2px 7px;border-radius:20px;background:rgba(255,255,255,.06);color:var(--chalk-dim);margin-top:8px}
+.node .pips{display:flex;gap:5px;margin-top:12px;align-items:center}
+.pip{width:9px;height:9px;border-radius:50%;background:rgba(255,255,255,.12)}
+.pip.on{background:var(--mint);box-shadow:0 0 7px var(--mint)}
+.node .crest{position:absolute;top:12px;right:12px;font-size:12px;font-family:var(--hand);padding:3px 8px;border-radius:20px}
+.crest.gold{background:rgba(244,227,172,.16);color:var(--yellow);border:1px solid rgba(244,227,172,.4)}
+.crest.silver{background:rgba(138,126,120,.14);color:var(--chalk-dim);border:1px solid rgba(138,126,120,.3)}
+.crest.bronze{background:rgba(153,99,55,.14);color:var(--coral);border:1px solid rgba(153,99,55,.35)}
+.node .barthin{height:5px;border-radius:5px;background:rgba(255,255,255,.08);margin-top:12px;overflow:hidden}
+.node .barthin i{display:block;height:100%;background:var(--accent,var(--mint));width:0;transition:width .5s}
+.locktip{position:absolute;inset:0;display:grid;place-items:center;font-size:13px;color:var(--chalk-dim);background:rgba(13,10,3,.55);backdrop-filter:blur(1px)}
+
+/* ---------- LESSON ---------- */
+.lesson-top{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:6px}
+.lesson-top .rune{font-size:34px}
+.steps-rail{display:flex;gap:6px;flex-wrap:wrap;margin:14px 0 22px}
+.srail{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--chalk-faint);
+  background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.07);padding:7px 11px;border-radius:30px;transition:.2s}
+.srail.cur{color:var(--pitch-black);background:var(--yellow);border-color:var(--yellow);font-weight:600}
+.srail.done{color:var(--mint);border-color:rgba(216,180,127,.4)}
+.srail .num{font-family:var(--mono);font-size:11px;opacity:.8}
+
+/* the blackboard panel */
+.board{
+  background:
+    linear-gradient(180deg,rgba(255,255,255,.02),rgba(0,0,0,.12)),
+    var(--board);
+  border-radius:18px; padding:26px 26px 30px; position:relative;
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,.05), 0 18px 50px rgba(0,0,0,.4);
+  border:10px solid; border-image:linear-gradient(160deg,var(--frame2),var(--frame)) 1; 
+}
+.board-inner{position:relative;z-index:1}
+.board h3.chalk-h{font-size:34px;margin-bottom:2px}
+.board .kicker{font-family:var(--hand);letter-spacing:2px;text-transform:uppercase;font-size:12px;color:var(--yellow)}
+.prose{font-size:15.5px;line-height:1.7;color:var(--chalk);margin:14px 0}
+.prose b{color:var(--yellow);font-weight:600}
+.muted{color:var(--chalk-dim)}
+
+/* memorize card */
+.memo{border:2px dashed var(--yellow);border-radius:12px;padding:14px 16px;margin:16px 0;background:rgba(244,227,172,.07);position:relative}
+.memo::before{content:"✍ LEARN THIS WORD-FOR-WORD";position:absolute;top:-11px;left:14px;background:var(--board);
+  font-family:var(--hand);font-size:11px;letter-spacing:1.5px;color:var(--yellow);padding:0 8px}
+.memo .line{font-size:15.5px;line-height:1.6;color:var(--chalk)}
+.memo .line + .line{margin-top:8px}
+
+.cantskip{border-left:4px solid var(--coral);background:rgba(153,99,55,.08);padding:11px 14px;border-radius:0 10px 10px 0;margin:14px 0;font-size:14.5px}
+.cantskip .tagx{font-family:var(--hand);color:var(--coral);font-size:12px;letter-spacing:1px;text-transform:uppercase;display:block;margin-bottom:3px}
+
+/* formula block with plain-words */
+.fx{margin:14px 0;border-radius:12px;overflow:hidden;border:1px solid rgba(255,255,255,.09)}
+.fx .math{font-family:var(--mono);font-size:15px;padding:13px 16px;background:rgba(0,0,0,.22);color:var(--chalk);overflow-x:auto;white-space:nowrap;letter-spacing:.3px}
+.fx .words{font-size:14px;padding:11px 16px;background:rgba(83,86,93,.08);color:var(--blue);line-height:1.55}
+.fx .words::before{content:"In plain words — ";color:var(--chalk-dim);font-weight:600}
+
+/* why? expander */
+.why{margin:10px 0}
+.why > button{font-family:var(--hand);font-size:14px;color:var(--violet);border:1px dashed rgba(176,131,92,.5);
+  padding:5px 12px;border-radius:30px;transition:.15s;background:rgba(176,131,92,.07)}
+.why > button:hover{background:rgba(176,131,92,.16);color:var(--tan)}
+.why > button::before{content:"❔ why? ";opacity:.8}
+.why .ans{display:none;margin-top:9px;font-size:14px;line-height:1.6;color:var(--chalk-dim);
+  border-left:3px solid var(--violet);padding:8px 14px;background:rgba(176,131,92,.06);border-radius:0 10px 10px 0}
+.why.open .ans{display:block;animation:fade .25s}
+.why.open > button{background:rgba(176,131,92,.2)}
+
+/* examples list */
+.examples{display:grid;gap:9px;margin:14px 0}
+.ex{display:flex;gap:11px;align-items:flex-start;font-size:14.5px;background:rgba(255,255,255,.035);padding:11px 13px;border-radius:11px;border:1px solid rgba(255,255,255,.06)}
+.ex .dot{flex:0 0 auto;font-size:18px;margin-top:-1px}
+
+/* pseudocode */
+.code{font-family:var(--mono);font-size:13.5px;line-height:1.7;background:rgba(0,0,0,.28);border:1px solid rgba(255,255,255,.08);
+  border-radius:12px;padding:14px 16px;overflow-x:auto;white-space:pre;color:var(--chalk);margin:14px 0}
+.code .kw{color:var(--coral)}
+.code .fn{color:var(--yellow)}
+.code .cm{color:var(--chalk-faint);font-style:italic}
+
+/* nav buttons */
+.lesson-nav{display:flex;justify-content:space-between;gap:12px;margin-top:22px}
+
+/* ===== VISUALIZER ===== */
+.viz{margin:14px 0}
+.arr{display:flex;gap:7px;flex-wrap:wrap;align-items:flex-end;margin:8px 0}
+.cell{position:relative;min-width:42px;height:46px;display:grid;place-items:center;font-family:var(--mono);font-size:16px;
+  border:2px solid rgba(255,255,255,.22);border-radius:8px;background:rgba(255,255,255,.04);transition:.25s}
+.cell .idx{position:absolute;top:-17px;left:0;right:0;text-align:center;font-size:10px;color:var(--chalk-faint);font-family:var(--mono)}
+.cell.L{border-color:var(--blue);background:rgba(83,86,93,.16);color:var(--ivory-mist)}
+.cell.R{border-color:var(--coral);background:rgba(153,99,55,.16);color:var(--pale-oak)}
+.cell.merged{border-color:var(--mint);background:rgba(216,180,127,.16)}
+.cell.ptr{box-shadow:0 0 0 3px rgba(244,227,172,.5);transform:translateY(-5px)}
+.cell.flash{animation:flashcell .6s}
+@keyframes flashcell{0%{background:var(--coral);color:#fff;transform:scale(1.12)}100%{}}
+.vlabel{font-family:var(--mono);font-size:12px;color:var(--chalk-dim);margin:14px 0 2px;display:flex;align-items:center;gap:8px}
+.vlabel .chip{font-size:11px;padding:2px 8px;border-radius:20px;background:rgba(255,255,255,.07)}
+.invcount{font-family:var(--disp);font-size:40px;color:var(--yellow);line-height:1}
+.vlog{font-family:var(--mono);font-size:12.5px;line-height:1.6;color:var(--chalk-dim);background:rgba(0,0,0,.22);
+  border-radius:10px;padding:10px 13px;margin-top:12px;max-height:150px;overflow:auto}
+.vlog .hot{color:var(--coral)}
+.vlog .cool{color:var(--blue)}
+.vlog .good{color:var(--mint)}
+.vctrl{display:flex;gap:9px;flex-wrap:wrap;margin-top:14px;align-items:center}
+
+/* master theorem calculator */
+.mt-row{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end;margin:12px 0}
+.mt-field{display:flex;flex-direction:column;gap:5px}
+.mt-field label{font-size:12px;color:var(--chalk-dim);font-family:var(--mono)}
+.mt-field input,.mt-field select{font-family:var(--mono);font-size:15px;background:rgba(0,0,0,.3);border:1px solid rgba(255,255,255,.15);
+  color:var(--chalk);border-radius:9px;padding:9px 11px;width:120px}
+.mt-out{border-radius:12px;padding:14px 16px;margin-top:8px;border:1px solid rgba(255,255,255,.1);background:rgba(0,0,0,.2);font-size:14.5px;line-height:1.6}
+.mt-out .case{font-family:var(--disp);font-size:24px;color:var(--mint)}
+
+/* matrix (strassen) */
+.matbox{display:inline-grid;grid-template-columns:repeat(2,1fr);gap:4px;background:rgba(255,255,255,.06);padding:6px;border-radius:10px;border:1px solid rgba(255,255,255,.12);margin:6px}
+.matcell{width:40px;height:34px;display:grid;place-items:center;font-family:var(--mono);font-size:13px;background:rgba(0,0,0,.25);border-radius:6px}
+.prodcard{display:inline-flex;flex-direction:column;gap:2px;border:1px solid rgba(255,255,255,.12);border-radius:10px;padding:9px 11px;margin:5px;background:rgba(255,255,255,.035);min-width:120px}
+.prodcard .pn{font-family:var(--disp);font-size:22px;color:var(--yellow)}
+.prodcard .pf{font-family:var(--mono);font-size:11.5px;color:var(--chalk-dim)}
+.prodcard.lit{border-color:var(--mint);box-shadow:0 0 12px rgba(216,180,127,.3)}
+
+/* closest pair canvas */
+.cpwrap{position:relative;background:rgba(0,0,0,.2);border-radius:12px;border:1px solid rgba(255,255,255,.09);overflow:hidden}
+canvas{display:block;width:100%}
+
+/* karatsuba */
+.kbits{display:flex;gap:4px;font-family:var(--mono);margin:8px 0}
+.kbit{width:26px;height:34px;display:grid;place-items:center;border-radius:5px;font-size:14px;border:1px solid rgba(255,255,255,.15)}
+.kbit.hi{background:rgba(83,86,93,.2);border-color:var(--blue)}
+.kbit.lo{background:rgba(244,227,172,.18);border-color:var(--yellow)}
+
+/* ===== QUIZ ===== */
+.quizcard{margin:14px 0}
+.qtext{font-size:17px;line-height:1.5;font-weight:500;margin-bottom:14px}
+.opt{display:block;width:100%;text-align:left;padding:13px 15px;border-radius:11px;margin:8px 0;font-size:14.5px;
+  border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.035);transition:.15s}
+.opt:hover{border-color:rgba(255,255,255,.3);background:rgba(255,255,255,.07)}
+.opt.correct{border-color:var(--mint);background:rgba(216,180,127,.16)}
+.opt.wrong{border-color:var(--coral);background:rgba(153,99,55,.16)}
+.opt.dim{opacity:.5}
+.qexpl{margin-top:12px;font-size:14px;line-height:1.6;border-radius:10px;padding:12px 14px;background:rgba(83,86,93,.08);border:1px solid rgba(83,86,93,.2);display:none}
+.qexpl.show{display:block;animation:fade .3s}
+.qprog{font-family:var(--mono);font-size:12px;color:var(--chalk-faint);margin-bottom:8px}
+
+/* reconstruct challenge */
+.recon-pool,.recon-slots{display:flex;flex-direction:column;gap:7px;margin:10px 0}
+.recon-line{font-family:var(--mono);font-size:13px;padding:10px 13px;border-radius:9px;border:1px solid rgba(255,255,255,.14);
+  background:rgba(255,255,255,.04);cursor:grab;transition:.12s;display:flex;align-items:center;gap:10px}
+.recon-line:hover{border-color:var(--yellow)}
+.recon-line.ph{opacity:.4}
+.recon-slots{min-height:40px;border:1.5px dashed rgba(255,255,255,.16);border-radius:12px;padding:10px}
+.recon-line .grip{color:var(--chalk-faint)}
+.recon-line.ok{border-color:var(--mint);background:rgba(216,180,127,.1)}
+.recon-line.bad{border-color:var(--coral);background:rgba(153,99,55,.1)}
+
+/* blackboard recall */
+.recall{border:2px solid rgba(244,227,172,.3);border-radius:14px;padding:18px;background:rgba(0,0,0,.18);margin:14px 0}
+.recall .prompt{font-family:var(--disp);font-size:26px;color:var(--chalk);margin-bottom:6px}
+.recall .model{display:none;margin-top:12px;border-top:1px dashed rgba(255,255,255,.15);padding-top:12px;animation:fade .3s}
+.recall.revealed .model{display:block}
+.rate-row{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap}
+.rate{padding:8px 14px;border-radius:30px;font-size:13px;border:1px solid rgba(255,255,255,.15)}
+.rate.miss{color:var(--coral)} .rate.soso{color:var(--yellow)} .rate.nail{color:var(--mint)}
+.rate:hover{background:rgba(255,255,255,.08)}
+
+/* exam simulator */
+.exam-stage{text-align:center;padding:20px 0}
+.examiner{width:120px;height:120px;margin:0 auto 14px;border-radius:50%;display:grid;place-items:center;font-size:62px;
+  background:radial-gradient(circle at 38% 30%,var(--deep-mocha),var(--shadow-grey));border:2px solid rgba(176,131,92,.4);box-shadow:0 0 40px rgba(176,131,92,.2)}
+.examiner.angry{animation:shake .5s}
+@keyframes shake{0%,100%{transform:none}25%{transform:translateX(-6px) rotate(-2deg)}75%{transform:translateX(6px) rotate(2deg)}}
+.exam-q{font-family:var(--disp);font-size:30px;line-height:1.1;max-width:680px;margin:0 auto 6px}
+.hpbar{max-width:420px;margin:10px auto;height:14px;border-radius:10px;background:rgba(255,255,255,.08);overflow:hidden;border:1px solid rgba(255,255,255,.1)}
+.hpbar i{display:block;height:100%;background:linear-gradient(90deg,var(--coral),var(--violet));transition:width .5s}
+
+/* toast */
+.toast-wrap{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);z-index:200;display:flex;flex-direction:column;gap:9px;align-items:center;pointer-events:none}
+.toast{font-size:14px;padding:11px 18px;border-radius:30px;background:rgba(41,33,37,.96);border:1px solid var(--mint);color:var(--chalk);
+  box-shadow:0 10px 30px rgba(0,0,0,.5);animation:pop .35s, fadeup 3s forwards;display:flex;align-items:center;gap:9px}
+.toast.gold{border-color:var(--yellow)} .toast.coral{border-color:var(--coral)}
+@keyframes pop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+@keyframes fadeup{0%,80%{opacity:1}100%{opacity:0;transform:translateY(-10px)}}
+
+/* collection drawer */
+.modal-bg{position:fixed;inset:0;z-index:150;background:rgba(13,10,3,.78);backdrop-filter:blur(3px);display:none;align-items:flex-start;justify-content:center;padding:40px 16px;overflow:auto}
+.modal-bg.show{display:flex;animation:fade .25s}
+.modal{max-width:720px;width:100%;background:linear-gradient(160deg,var(--board2),var(--shadow-grey));border:1px solid rgba(255,255,255,.12);border-radius:18px;padding:24px}
+.modal h2{font-family:var(--disp);font-size:36px;margin:0 0 4px}
+.coll-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;margin-top:16px}
+.coll{border-radius:12px;padding:13px;text-align:center;border:1px solid rgba(255,255,255,.1);background:rgba(255,255,255,.03)}
+.coll.locked{opacity:.35;filter:grayscale(1)}
+.coll .ci{font-size:34px}.coll .cn{font-family:var(--hand);font-size:15px;margin-top:6px}.coll .cd{font-size:11px;color:var(--chalk-faint);margin-top:3px;line-height:1.4}
+.closex{float:right;font-size:22px;color:var(--chalk-dim);background:none;border:none;line-height:1}
+
+/* particles */
+.chalk-particle{position:fixed;width:6px;height:6px;border-radius:50%;background:var(--chalk);pointer-events:none;z-index:120;opacity:.9}
+
+/* progress strip helper */
+.section-label{font-family:var(--hand);letter-spacing:2px;text-transform:uppercase;color:var(--chalk-faint);font-size:12px;margin:26px 0 4px}
+
+/* responsive */
+@media(max-width:640px){
+  .hud{gap:9px;padding:9px 12px}
+  .stat{font-size:11px;padding:5px 9px}
+  .xpwrap{min-width:110px}
+  .board{padding:18px 15px 22px;border-width:7px}
+  .lesson-nav .btn{flex:1}
+}
+.hide{display:none!important}
+.center{text-align:center}
+.mt8{margin-top:8px}.mt16{margin-top:16px}.mb0{margin-bottom:0}
+.pillbar{display:flex;gap:8px;flex-wrap:wrap;margin:18px 0}
+.pillbar .pillbtn{font-size:13px;padding:9px 14px;border-radius:30px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:var(--chalk-dim)}
+.pillbar .pillbtn.active{background:var(--yellow);color:var(--pitch-black);border-color:var(--yellow);font-weight:600}
+.pillbar .pillbtn:hover{color:var(--chalk)}
+</style>
+</head>
+<body>
+<div class="hud">
+  <div class="brand" onclick="Game.go('home')">
+    <div class="mark">∂&amp;C<small>Recursion Trials</small></div>
+  </div>
+  <div class="spacer"></div>
+  <div class="stat" title="Day streak"><span class="ic">🔥</span><b id="hud-streak">0</b></div>
+  <div class="stat" title="Runes collected"><span class="ic">🔮</span><b id="hud-runes">0</b>/7</div>
+  <div class="xpwrap">
+    <div class="lvlrow"><span>Lv <b id="hud-lvl" style="color:var(--yellow)">1</b></span><span id="hud-xp">0/100</span></div>
+    <div class="xpbar"><i id="hud-xpbar"></i></div>
+  </div>
+  <button class="iconbtn" onclick="Game.openCollection()">🎒 Collection</button>
+  <button class="iconbtn" onclick="Game.go('home')">🗺️ Map</button>
+</div>
+
+<div class="wrap"><div id="app"></div></div>
+
+<div class="toast-wrap" id="toasts"></div>
+
+<div class="modal-bg" id="modal-bg"><div class="modal" id="modal"></div></div>
+
+<script>
+/* ============================================================
+   THE RECURSION TRIALS — course content (faithful to the PDF)
+   ============================================================ */
+const CHAPTERS = [
+
+/* ----------------------------------------------------------------
+   1. COUNTING INVERSIONS
+---------------------------------------------------------------- */
+{
+  id:"inversions",
+  title:"Counting Inversions",
+  sub:"How different are two rankings? (collaborative filtering)",
+  rune:"🪞", runeName:"Rune of Mirrors", accent:"var(--blue)",
+
+  problem:{
+    board:"Given an array A[1:n] of n pairwise distinct numbers, determine the number of inversions: pairs of indices i < j with A[i] > A[j]. (The measure is 0 when A[1] < A[2] < … < A[n] and increases as the array becomes more scrambled.)",
+    plain:"We are handed a list of distinct numbers. We want one single number that measures how far the list is from being sorted in increasing order. That number is the count of inversions.",
+    formulas:[
+      {math:"Inversion: a pair i < j  such that  A[i] > A[j]", words:"Two positions form an inversion when the earlier position holds the bigger value — i.e. they appear in the wrong order relative to each other."},
+      {math:"Goal: output  #{ (i,j) : i < j  and  A[i] > A[j] }", words:"Count every wrongly-ordered pair. A perfectly sorted array A[1]<A[2]<…<A[n] has 0 inversions; a fully reversed array has the maximum."}
+    ]
+  },
+
+  motivation:{
+    text:"This is the maths behind collaborative filtering — the 'people with similar taste also liked…' feature. To recommend things, a site must measure how similar your taste is to a stranger's.",
+    examples:[
+      {icon:"🎬", text:"You rank n movies. Label them 1..n by YOUR ranking, then list those labels in the STRANGER's order. The number of out-of-order pairs (inversions) measures disagreement: 0 = identical taste, maximum = opposite taste."},
+      {icon:"🛒", text:"Recommender systems (books, restaurants, music) find users whose rankings have few inversions against yours, then suggest what those users liked."},
+      {icon:"📊", text:"Any time you need a 'how unsorted is this?' score — e.g. measuring how scrambled a list is, or partial agreement between two orderings."}
+    ]
+  },
+
+  idea:{
+    divide:"Split A into a left half and a right half (this is just merge sort's split).",
+    conquer:"Recursively count inversions inside the left half, and inside the right half.",
+    combine:"Count the SPLIT inversions — pairs with one index in the left half and one in the right — while MERGING the two (already sorted) halves. Add all three counts.",
+    note:"The clever part: because both halves come back sorted, the split inversions can be counted for free during a single merge pass."
+  },
+
+  walk:{ kind:"inversions", data:[2,4,1,3,5] },
+
+  algo:{
+    name:"NumberOfInversions (modified merge sort)",
+    lines:[
+      "NumberOfInversions(A[p:r])",
+      "  inv = 0",
+      "  if p < r then",
+      "    q = ⌊(p+r)/2⌋",
+      "    inv += NumberOfInversions(A[p:q])        // left half",
+      "    inv += NumberOfInversions(A[q+1:r])      // right half",
+      "    inv += NumberOfInversionsWithMerge(A[p:q], A[q+1:r])",
+      "  return inv",
+      "",
+      "NumberOfInversionsWithMerge(A[p:q], A[q+1:r])",
+      "  n1 = q-p+1 ;  n2 = r-q",
+      "  copy left into L[1..n1], right into R[1..n2]",
+      "  L[n1+1] = ∞ ;  R[n2+1] = ∞      // sentinels",
+      "  i = 1 ;  j = 1 ;  inv = 0",
+      "  for k = p to r do",
+      "    if L[i] < R[j] then",
+      "      A[k] = L[i] ;  i = i+1",
+      "    else                            // R[j] is smaller",
+      "      A[k] = R[j]",
+      "      inv += n1 - i + 1             // KEY LINE",
+      "      j = j+1",
+      "  return inv"
+    ],
+    note:"It is ordinary merge sort with one extra line. The whole trick lives in inv += n1 - i + 1."
+  },
+
+  recon:{
+    title:"Rebuild the merge-counting core",
+    lines:[
+      "if L[i] < R[j] then",
+      "    A[k] = L[i] ;  i = i+1",
+      "else",
+      "    A[k] = R[j]",
+      "    inv += n1 - i + 1",
+      "    j = j+1"
+    ]
+  },
+
+  correctness:[
+    "It is enough to prove the merge step is correct, because the recursive calls handle the within-half pairs.",
+    "Invariant: when we compare L[i] with R[j], all inversions whose left element is before i and whose right element is before j have already been counted.",
+    "Case A[i'] < A[j'] (left element smaller): since the right side is sorted, A[j'] < A[j'+1] < … too, so the left element is smaller than every remaining right element. No new inversion — we just output the left element.",
+    "Case A[i'] > A[j'] (right element smaller): the right element R[j] is smaller than the current left element AND than every left element still waiting (because the left side is sorted: A[i'] ≤ A[i'+1] ≤ … ≤ A[q]). So R[j] forms an inversion with ALL of them. There are exactly n1 - i + 1 left elements remaining, so we add that count."
+  ],
+
+  runtime:{
+    recurrence:"T(n) = 2·T(n/2) + O(n)",
+    words:"Solving two halves of size n/2 each, plus a linear-time merge to stitch them and count split inversions.",
+    result:"T(n) = O(n log n)",
+    deriv:"Exactly the merge-sort recurrence, so it resolves to n log n — a huge win over the O(n²) brute force that checks every pair."
+  },
+
+  memorize:[
+    "An inversion is a pair of indices i < j with A[i] > A[j].",
+    "When the right element R[j] is taken (it is the smaller one), it is smaller than every left element still remaining, so it creates n1 − i + 1 new inversions — add exactly that.",
+    "T(n) = 2T(n/2) + O(n) ⇒ O(n log n)."
+  ],
+
+  cantskip:[
+    "You MUST be able to explain WHY taking R[j] adds 'n1 − i + 1': because the left half is sorted, every left element from index i onward is ≥ L[i] > R[j].",
+    "Brute force is O(n²) (check all pairs); insertion sort runs in O(n + I) where I is the number of inversions (each while-loop step removes exactly one inversion)."
+  ],
+
+  whys:[
+    {q:"Why does insertion sort take O(n + I)?", a:"Ignoring the inner while-loop, insertion sort is O(n). Each iteration of the while-loop swaps two adjacent out-of-order elements, which destroys exactly one inversion. The array ends with zero inversions, so the while-loop runs exactly I times in total. Hence O(n + I). If I is small the array is nearly sorted and this is fast; in the worst case I = C(n,2) ≈ n²/2, so it is quadratic."},
+    {q:"Why can't we just count inversions during a normal sort without the extra line?", a:"A normal merge throws away the information of how many left elements were 'jumped over'. The single extra line inv += n1 − i + 1 captures exactly that, with no extra asymptotic cost — it rides along inside the merge you were doing anyway."},
+    {q:"Why must the halves be sorted for the trick to work?", a:"The count n1 − i + 1 is only correct if every remaining left element is ≥ L[i]. That's guaranteed only when the left half is sorted. Sorting is a free side-effect of merge sort, so we get it for nothing."}
+  ],
+
+  quiz:[
+    {q:"What exactly is an inversion?", opts:["Any pair i<j","A pair i<j with A[i] > A[j]","A pair i<j with A[i] < A[j]","Two equal elements"], a:1, expl:"An inversion is a pair of indices i<j where the earlier one holds the larger value — i.e. they are out of order."},
+    {q:"During the merge, you take R[j] because it is smaller than L[i]. How many new inversions does this create?", opts:["1","j","n1 − i + 1","n2 − j + 1"], a:2, expl:"R[j] is smaller than L[i] AND than every left element still waiting (the left half is sorted). There are n1 − i + 1 such elements remaining, so it forms that many inversions."},
+    {q:"What is the running time, and why?", opts:["O(n²), we still compare all pairs","O(n log n), merge-sort recurrence T(n)=2T(n/2)+O(n)","O(n), single pass","O(log n)"], a:1, expl:"It's merge sort plus one O(1) line, so the recurrence is unchanged: 2T(n/2)+O(n) = O(n log n)."},
+    {q:"In collaborative filtering, what do inversions measure?", opts:["Number of movies","Disagreement between two rankings","Total rating score","Length of the list"], a:1, expl:"Label movies by your ranking, list them in the stranger's order, and count inversions — that's how far apart your tastes are."}
+  ],
+
+  recall:[
+    {prompt:"State the problem and write it on the board.", model:"\"Given A[1..n] of distinct numbers, count the inversions: pairs i<j with A[i]>A[j].\" 0 means sorted, maximum means reversed. It's the similarity measure behind collaborative filtering."},
+    {prompt:"Give the algorithm in one breath.", model:"Modified merge sort: count inversions in the left half, in the right half, then count split inversions during the merge by adding n1−i+1 each time a right element is output."},
+    {prompt:"Prove the merge count is correct.", model:"When R[j] is the smaller element, it is smaller than every remaining left element (left half sorted), so it inverts with all n1−i+1 of them. When L[i] is smaller, it inverts with no remaining right element."},
+    {prompt:"State and solve the recurrence.", model:"T(n)=2T(n/2)+O(n) = O(n log n), the same as merge sort."}
+  ]
+},
+
+/* ----------------------------------------------------------------
+   2. INVESTMENT / MAXIMUM PROFIT
+---------------------------------------------------------------- */
+{
+  id:"maxprofit",
+  title:"Maximum Profit",
+  sub:"Best day to buy, later day to sell (the investment problem)",
+  rune:"📈", runeName:"Rune of Fortune", accent:"var(--mint)",
+
+  problem:{
+    board:"We are given an array A[1:n] of n positive numbers (the daily price of a stock). Determine two indices 1 ≤ i ≤ j ≤ n such that the profit A[j] − A[i] is as large as possible (buy on day i, sell on the later day j).",
+    plain:"We see a stock's price on each of n days. We must pick a buy-day and a later sell-day so the gain (sell price minus buy price) is as large as possible.",
+    formulas:[
+      {math:"Find  1 ≤ i ≤ j ≤ n  maximizing  A[j] − A[i]", words:"Choose two days, the buy-day not after the sell-day, so that the sell price minus the buy price is the biggest it can be."}
+    ]
+  },
+
+  motivation:{
+    text:"A clean model for 'find the largest rise in a sequence'. The buy must come before the sell, which is what makes it more than just (max − min).",
+    examples:[
+      {icon:"💹", text:"Stock trading: maximum single buy/sell profit over a price history."},
+      {icon:"📉", text:"Sensor / signal data: the largest increase from an earlier reading to a later one (e.g. temperature, load, demand)."},
+      {icon:"🏔️", text:"Any 'maximum later-minus-earlier' question where the earlier index must come first — the constraint i ≤ j is exactly what rules out simply taking (global max − global min)."}
+    ]
+  },
+
+  idea:{
+    divide:"Split the days into a left half A[1..m] and a right half A[m+1..n].",
+    conquer:"Recursively find the best buy/sell entirely inside the left half, and entirely inside the right half.",
+    combine:"Handle the CROSSING case: buy in the left, sell in the right. The best such trade buys at the MINIMUM price in the left half and sells at the MAXIMUM price in the right half. Return whichever of the three is largest.",
+    note:"Crossing is forced to use the left-minimum and right-maximum — that's the whole insight for the combine step."
+  },
+
+  walk:{ kind:"maxprofit", data:[7,1,5,3,6,4] },
+
+  algo:{
+    name:"MaximalIncrease(A[l:r]) → indices (i,j)",
+    lines:[
+      "MaximalIncrease(A[l:r])",
+      "  if l = r then return (l, l)",
+      "  m = ⌊(l+r)/2⌋",
+      "  (x,x') = MaximalIncrease(A[l:m])        // best fully in left",
+      "  (y,y') = MaximalIncrease(A[m+1:r])      // best fully in right",
+      "  z  = MinimumSelection(A[l:m])           // cheapest buy on left",
+      "  z' = MaximumSelection(A[m+1:r])         // dearest sell on right",
+      "  if (A[x']−A[x] ≥ A[y']−A[y]) and (A[x']−A[x] ≥ A[z']−A[z])",
+      "    then return (x,x')",
+      "  if (A[y']−A[y] ≥ A[x']−A[x]) and (A[y']−A[y] ≥ A[z']−A[z])",
+      "    then return (y,y')",
+      "  if (A[z']−A[z] ≥ A[x']−A[x]) and (A[z']−A[z] ≥ A[y']−A[y])",
+      "    then return (z,z')"
+    ],
+    note:"MinimumSelection / MaximumSelection scan a subarray for its min / max index."
+  },
+
+  recon:{
+    title:"Rebuild the three candidates",
+    lines:[
+      "(x,x') = MaximalIncrease(A[l:m])",
+      "(y,y') = MaximalIncrease(A[m+1:r])",
+      "z  = MinimumSelection(A[l:m])",
+      "z' = MaximumSelection(A[m+1:r])",
+      "return the best of (x,x'), (y,y'), (z,z')"
+    ]
+  },
+
+  correctness:[
+    "Any optimal trade falls into exactly one of three cases: both days in the left half, both days in the right half, or buy-day in the left and sell-day in the right.",
+    "The first two cases are returned correctly by the recursive calls.",
+    "In the crossing case the buy A[i] must be the cheapest price in the left half (anything more expensive only shrinks the profit) and the sell A[j] must be the dearest price in the right half. So (left-min, right-max) is the best crossing trade.",
+    "Taking the maximum of the three covers all possibilities, so the answer is optimal."
+  ],
+
+  runtime:{
+    recurrence:"T(n) = 2·T(n/2) + O(n)",
+    words:"Two half-size recursions, plus an O(n) scan to find the left-minimum and right-maximum.",
+    result:"T(n) = O(n log n)",
+    deriv:"Same shape as merge sort ⇒ n log n. But we can do better — see the upgrade."
+  },
+
+  upgrade:{
+    title:"The O(n) upgrade",
+    text:"Re-scanning for min and max each level is wasteful. Make each call ALSO return the min and max of its subarray. Then the crossing buy = left-call's min and crossing sell = right-call's max are available for FREE, so combine becomes O(1).",
+    recurrence:"T(n) = 2·T(n/2) + O(1)",
+    words:"Two half-size recursions, plus only constant work to combine (no scanning).",
+    result:"T(n) = O(n)",
+    deriv:"Unrolling: T(n)=c1+2T(n/2)=c1+2c1+4T(n/4)=…=c1(2^k−1)+2^k·T(1) = c1(n−1)+c2·n = (c1+c2)n − c1 = O(n). The 'sum of a geometric series' is what collapses it to linear."
+  },
+
+  memorize:[
+    "Three cases: best-in-left, best-in-right, and crossing.",
+    "The crossing trade buys at the MINIMUM of the left half and sells at the MAXIMUM of the right half.",
+    "Naive combine (re-scan min/max): T(n)=2T(n/2)+O(n)=O(n log n). Upgraded (return min/max too): T(n)=2T(n/2)+O(1)=O(n)."
+  ],
+
+  cantskip:[
+    "Be ready to explain why crossing forces left-min / right-max: a cheaper buy or dearer sell can never reduce the profit.",
+    "Be ready to derive the O(n) result by unrolling T(n)=2T(n/2)+O(1) into the geometric sum c1(2^k−1)+2^k T(1)."
+  ],
+
+  whys:[
+    {q:"Why is the crossing buy the left half's minimum?", a:"In a crossing trade the buy-day is fixed to the left half and the sell-day to the right half. The sell price is whatever the right side decides; to maximize sell − buy we simply make buy as small as possible. The smallest left price is the minimum, so the crossing buy is the left-minimum (and symmetrically the sell is the right-maximum)."},
+    {q:"Why does returning min and max make combine O(1)?", a:"The only reason combine was O(n) was the scan to find left-min and right-max. If every recursive call already hands those back, the parent just reads two numbers — constant work — instead of scanning. That removes the O(n) term from the recurrence."},
+    {q:"Why does 2T(n/2)+O(1) give O(n), not O(n log n)?", a:"Unrolling adds the constants 1+2+4+…+2^(k−1) = 2^k − 1 = n − 1, plus n leaf calls. The work doubles at each deeper level, so the bottom level dominates and the total is proportional to n. With +O(n) instead, every level costs n and there are log n levels — that's where the extra log comes from."}
+  ],
+
+  quiz:[
+    {q:"In the crossing case, where is the buy and where is the sell?", opts:["Buy = left max, Sell = right min","Buy = left min, Sell = right max","Buy = global min, Sell = global max","Buy and sell both in the right half"], a:1, expl:"Crossing means buy in left, sell in right. To maximize profit, buy at the cheapest left price (min) and sell at the dearest right price (max)."},
+    {q:"What makes the upgraded algorithm O(n) instead of O(n log n)?", opts:["It uses a faster sort","Each call returns its min and max, making combine O(1)","It skips the recursion","It only looks at half the data"], a:1, expl:"Returning min/max removes the O(n) scan in combine, changing the recurrence to 2T(n/2)+O(1)=O(n)."},
+    {q:"Why isn't the answer simply (global max − global min)?", opts:["Because prices are negative","Because the buy-day must come before the sell-day","Because there are duplicates","It actually is"], a:1, expl:"The constraint i ≤ j (buy before sell) matters: the global minimum might occur AFTER the global maximum, which would be illegal."},
+    {q:"Unrolling T(n)=2T(n/2)+O(1) gives which closed form?", opts:["c·n log n","c1(n−1)+c2·n = O(n)","c·log n","c·n²"], a:1, expl:"The geometric sum 1+2+…+2^(k−1)=2^k−1=n−1 plus n leaves gives a linear total."}
+  ],
+
+  recall:[
+    {prompt:"State the problem and write it on the board.", model:"\"Given prices A[1..n], find days i ≤ j maximizing A[j]−A[i].\" Buy on day i, sell on a later day j, maximize the gain."},
+    {prompt:"Describe the divide-and-conquer with its three cases.", model:"Split into halves. Best trade is either fully left, fully right, or crossing. Crossing buys at the left-min and sells at the right-max. Return the best of the three."},
+    {prompt:"Give both running times and the difference.", model:"Naive combine re-scans for min/max: 2T(n/2)+O(n)=O(n log n). Upgraded: each call also returns min and max, so combine is O(1): 2T(n/2)+O(1)=O(n)."},
+    {prompt:"Derive the O(n) closed form.", model:"T(n)=c1+2T(n/2)=…=c1(2^k−1)+2^k T(1)=c1(n−1)+c2 n=(c1+c2)n−c1=O(n)."}
+  ]
+},
+
+/* ----------------------------------------------------------------
+   3. THE MASTER THEOREM
+---------------------------------------------------------------- */
+{
+  id:"master",
+  title:"The Master Theorem",
+  sub:"A formula for solving divide-and-conquer recurrences",
+  rune:"📜", runeName:"Rune of Law", accent:"var(--yellow)",
+
+  problem:{
+    board:"Solve recurrences of the form  T(n) = a·T(n/b) + f(n),  with a ≥ 1, b > 1, f(n) > 0.",
+    plain:"Most divide-and-conquer algorithms make 'a' recursive calls, each on a problem of size n/b, and spend f(n) extra time splitting and combining. The Master Theorem reads off the overall running time without unrolling by hand.",
+    formulas:[
+      {math:"T(n) = a·T(n/b) + f(n)", words:"The total time = (number of subproblems a) × (time for each, on size n/b) + (the splitting/combining cost f(n))."},
+      {math:"Watershed exponent:  n^(log_b a)", words:"This is the cost contributed by all the leaves of the recursion tree. We compare f(n) against this single yardstick to decide who dominates."}
+    ]
+  },
+
+  motivation:{
+    text:"It is the universal shortcut: a, b, f(n) go in — a tight Θ bound comes out. Almost every algorithm in this course is analysed with it (merge sort, Karatsuba, Strassen, the closest pair…).",
+    examples:[
+      {icon:"🧮", text:"Merge sort: a=2, b=2, f=n ⇒ Θ(n log n) (case 2)."},
+      {icon:"✖️", text:"Karatsuba: a=3, b=2, f=n ⇒ Θ(n^log₂3) (case 1)."},
+      {icon:"🔢", text:"Strassen: a=7, b=2, f=n² ⇒ Θ(n^log₂7) (case 1)."}
+    ]
+  },
+
+  idea:{
+    divide:"Compute the watershed n^(log_b a) — the total cost of the leaves.",
+    conquer:"Compare your f(n) (the per-level combine cost) against that watershed.",
+    combine:"Pick the case: leaves win (1), tie (2), or root/combine wins (3). The dominant side decides Θ.",
+    note:"Intuition: a recursion tree has the root cost f(n) at the top and n^(log_b a) cost spread across the leaves. Whichever is asymptotically bigger wins; if they tie, you pay an extra log n for the number of levels."
+  },
+
+  walk:{ kind:"master" },
+
+  algo:{
+    name:"The three cases",
+    lines:[
+      "Let  W = n^(log_b a)        // the watershed (leaf cost)",
+      "",
+      "CASE 1  (leaves dominate):",
+      "  if f(n) = O(n^(log_b a − ε))  for some ε > 0",
+      "      ⇒  T(n) = Θ( n^(log_b a) )",
+      "",
+      "CASE 2  (a tie):",
+      "  if f(n) = Θ(n^(log_b a))",
+      "      ⇒  T(n) = Θ( n^(log_b a) · log n )",
+      "",
+      "CASE 3  (root/combine dominates):",
+      "  if f(n) = Ω(n^(log_b a + ε))  for some ε > 0",
+      "  AND  a·f(n/b) ≤ c·f(n)  for some c<1 (regularity)",
+      "      ⇒  T(n) = Θ( f(n) )"
+    ],
+    note:"ε > 0 means f must be POLYNOMIALLY smaller/larger — a mere log-factor gap is not enough (that's the gap case)."
+  },
+
+  recon:{
+    title:"Order the three cases by which side wins",
+    lines:[
+      "Case 1: f(n) polynomially smaller than n^(log_b a) → Θ(n^(log_b a))",
+      "Case 2: f(n) equal to n^(log_b a) → Θ(n^(log_b a) log n)",
+      "Case 3: f(n) polynomially larger + regularity → Θ(f(n))"
+    ]
+  },
+
+  correctness:[
+    "Think of the recursion tree. Level 0 (the root) costs f(n). At depth d there are a^d nodes, each costing f(n/b^d). The leaves are at depth log_b n and number a^(log_b n) = n^(log_b a).",
+    "Case 1: the per-level cost grows going down, so the leaf level n^(log_b a) dominates the whole tree.",
+    "Case 2: every level costs roughly the same; there are log n levels, giving an extra log factor.",
+    "Case 3: the root cost f(n) dominates; the regularity condition a·f(n/b) ≤ c·f(n) guarantees the costs shrink geometrically down the tree, so the top term wins."
+  ],
+
+  runtime:{
+    recurrence:"Inputs: a, b, f(n)",
+    words:"You don't solve a recurrence here — the theorem IS the solution. You just identify which of the three cases applies.",
+    result:"Θ(n^(log_b a)),  Θ(n^(log_b a) log n),  or  Θ(f(n))",
+    deriv:"Worked examples: 9T(n/3)+n: log₃9=2, f=n=O(n^(2−1)) → case 1 → Θ(n²). | T(2n/3)+1: log_(3/2)1=0, f=1=Θ(n⁰) → case 2 → Θ(log n). | 3T(n/4)+n log n: log₄3≈0.79, f grows faster + regularity holds → case 3 → Θ(n log n)."
+  },
+
+  gap:{
+    title:"The gap case (theorem does NOT apply)",
+    text:"T(n)=2T(n/2)+n log n. Here log₂2=1 so the watershed is n. f(n)=n log n grows faster than n — but only by a factor of log n, which is NOT a polynomial factor (n^ε beats log n for any ε>0). So case 3 fails its 'polynomially larger' requirement and the theorem stays silent.",
+    result:"A finer analysis gives T(n) = Θ(n log² n)."
+  },
+
+  memorize:[
+    "T(n)=a·T(n/b)+f(n); compare f(n) against the watershed n^(log_b a).",
+    "Case 1 (f polynomially smaller): Θ(n^(log_b a)). Case 2 (f equal): Θ(n^(log_b a) log n). Case 3 (f polynomially larger + regularity a·f(n/b)≤c·f(n)): Θ(f(n)).",
+    "The ε is essential: a log-factor gap (like 2T(n/2)+n log n) is NOT polynomial, so the theorem doesn't apply there — answer is Θ(n log² n)."
+  ],
+
+  cantskip:[
+    "Know what n^(log_b a) means and be able to compute it: it equals the number of leaves a^(log_b n).",
+    "Know the regularity condition a·f(n/b) ≤ c·f(n) with c<1 — case 3 needs it.",
+    "Be able to identify the gap case and quote Θ(n log² n)."
+  ],
+
+  whys:[
+    {q:"Why n^(log_b a)?", a:"The recursion tree has branching factor a and depth log_b n. The number of leaves is a^(depth) = a^(log_b n) = n^(log_b a). Each leaf does O(1) work, so the leaves contribute n^(log_b a) total — the yardstick everything is compared against."},
+    {q:"Why does case 2 get an extra log n?", a:"In case 2 each of the log_b n levels of the tree costs about the same amount (≈ n^(log_b a)). Summing the same value over log n levels multiplies by log n, giving Θ(n^(log_b a) · log n)."},
+    {q:"Why does the gap case (2T(n/2)+n log n) escape the theorem?", a:"Case 3 demands f(n) be Ω(n^(log_b a + ε)) — polynomially larger. Here f/n = log n, and log n grows slower than n^ε for every ε>0, so no valid ε exists. The gap is only logarithmic, not polynomial, so the theorem cannot classify it. A direct argument then gives Θ(n log² n)."},
+    {q:"What is the regularity condition for?", a:"In case 3 we need the combine cost to actually shrink as we go down the tree so that the root term dominates. a·f(n/b) ≤ c·f(n) with c<1 guarantees the per-level costs form a decreasing geometric series summing to Θ(f(n))."}
+  ],
+
+  quiz:[
+    {q:"For T(n)=9T(n/3)+n, which case and result?", opts:["Case 2, Θ(n log n)","Case 1, Θ(n²)","Case 3, Θ(n)","Doesn't apply"], a:1, expl:"log₃9=2 so watershed is n². f(n)=n=O(n^(2−1)), polynomially smaller ⇒ case 1 ⇒ Θ(n²)."},
+    {q:"What does the watershed exponent n^(log_b a) represent in the recursion tree?", opts:["The depth","The total cost of all the leaves","The cost of the root","The number of levels"], a:1, expl:"It equals a^(log_b n) = the number of leaves, so it's the leaf level's total cost."},
+    {q:"Why doesn't the Master Theorem solve T(n)=2T(n/2)+n log n directly?", opts:["a is too large","f(n) is only a log-factor larger than n, not polynomially larger","b is not an integer","f(n) is negative"], a:1, expl:"Case 3 needs f polynomially larger (n^ε factor). A log n gap is not polynomial, so no case fits; the true answer is Θ(n log² n)."},
+    {q:"In case 3 you must additionally check…", opts:["that a is even","the regularity condition a·f(n/b) ≤ c·f(n), c<1","that n is a power of b","nothing else"], a:1, expl:"Case 3 requires the regularity condition so the root cost dominates the geometric series."}
+  ],
+
+  recall:[
+    {prompt:"Write the recurrence and the watershed on the board.", model:"T(n)=a·T(n/b)+f(n). Compare f(n) to n^(log_b a), which is the leaf cost a^(log_b n)."},
+    {prompt:"State all three cases with their results.", model:"1) f polynomially smaller → Θ(n^(log_b a)). 2) f equal → Θ(n^(log_b a) log n). 3) f polynomially larger + regularity a·f(n/b)≤c·f(n) → Θ(f(n))."},
+    {prompt:"Give the recursion-tree intuition.", model:"Root costs f(n); leaves cost n^(log_b a). Bigger side wins; if equal, multiply by the log n levels."},
+    {prompt:"Name a case the theorem can't solve and give the answer.", model:"2T(n/2)+n log n — only a log gap, not polynomial. Answer: Θ(n log² n)."}
+  ]
+},
+/* ----------------------------------------------------------------
+   4. KARATSUBA — fast integer multiplication
+---------------------------------------------------------------- */
+{
+  id:"karatsuba",
+  title:"Karatsuba Multiplication",
+  sub:"Multiplying two n-bit integers faster than O(n²)",
+  rune:"✖️", runeName:"Rune of Numbers", accent:"var(--violet)",
+
+  problem:{
+    board:"Multiply two n-bit integers x and y. The schoolbook method takes O(n²). Can we do better?",
+    plain:"We want the product of two big binary numbers. The method you learned in school (multiply by each digit, shift, add) costs about n² bit-operations. The goal is a recursive method that beats it.",
+    formulas:[
+      {math:"Schoolbook: n partial products × O(n) each = O(n²)", words:"You make one shifted partial product per digit (n of them), and each costs about n work to add in — so n × n = n²."}
+    ]
+  },
+
+  motivation:{
+    text:"Multiplication of huge integers is everywhere, and a faster algorithm cascades into many fields.",
+    examples:[
+      {icon:"🔐", text:"Cryptography (RSA, Diffie–Hellman) multiplies numbers with thousands of bits constantly."},
+      {icon:"🔬", text:"Scientific computing and number theory work with very large integers and high-precision arithmetic."},
+      {icon:"🧱", text:"It's the historic first proof that 'obvious' O(n²) multiplication is NOT optimal — the gateway to fast arithmetic."}
+    ]
+  },
+
+  idea:{
+    divide:"Split each n-bit number into a high half and a low half: x = x₁·2^(n/2) + x₀ and y = y₁·2^(n/2) + y₀.",
+    conquer:"The product expands to x·y = x₁y₁·2ⁿ + (x₁y₀ + x₀y₁)·2^(n/2) + x₀y₀ — which naively needs FOUR half-size products.",
+    combine:"Karatsuba's trick: the middle term x₁y₀+x₀y₁ = (x₁+x₀)(y₁+y₀) − x₁y₁ − x₀y₀. Since x₁y₁ and x₀y₀ are already computed, the middle costs just ONE more product. So only THREE half-size multiplications.",
+    note:"Four products → O(n²) (no gain). The (x₁+x₀)(y₁+y₀) trick drops it to three, which is the whole improvement."
+  },
+
+  walk:{ kind:"karatsuba", data:{x:"1101", y:"1011"} },
+
+  algo:{
+    name:"Karatsuba(x, y) — n a power of 2",
+    lines:[
+      "split  x = x1·2^(n/2) + x0 ,  y = y1·2^(n/2) + y0",
+      "",
+      "// THREE recursive products (not four):",
+      "P_high = Karatsuba(x1, y1)",
+      "P_low  = Karatsuba(x0, y0)",
+      "P_mid  = Karatsuba(x1+x0, y1+y0)",
+      "",
+      "middle = P_mid − P_high − P_low",
+      "return  P_high·2^n + middle·2^(n/2) + P_low"
+    ],
+    note:"The additions/subtractions and shifts are all O(n)."
+  },
+
+  recon:{
+    title:"Rebuild the three products + combine",
+    lines:[
+      "P_high = Karatsuba(x1, y1)",
+      "P_low  = Karatsuba(x0, y0)",
+      "P_mid  = Karatsuba(x1+x0, y1+y0)",
+      "middle = P_mid − P_high − P_low",
+      "return P_high·2^n + middle·2^(n/2) + P_low"
+    ]
+  },
+
+  correctness:[
+    "Writing x=x₁2^(n/2)+x₀ and y=y₁2^(n/2)+y₀ and expanding the product is just algebra: xy = x₁y₁2ⁿ + (x₁y₀+x₀y₁)2^(n/2) + x₀y₀.",
+    "The identity (x₁+x₀)(y₁+y₀) = x₁y₁ + x₁y₀ + x₀y₁ + x₀y₀. Subtracting x₁y₁ and x₀y₀ leaves exactly the middle coefficient x₁y₀+x₀y₁.",
+    "So the three products P_high=x₁y₁, P_low=x₀y₀, P_mid=(x₁+x₀)(y₁+y₀) suffice to assemble every term. (The sums x₁+x₀ may have n/2+1 bits, but that extra bit doesn't change the asymptotics.)"
+  ],
+
+  runtime:{
+    recurrence:"T(n) = 3·T(n/2) + O(n)",
+    words:"Three recursive multiplications on half-size numbers, plus linear-time additions, subtractions and shifts to combine.",
+    result:"T(n) = O(n^(log₂3)) ≈ O(n^1.585)",
+    deriv:"By the Master Theorem (case 1): a=3, b=2, watershed n^(log₂3)≈n^1.585 dominates f(n)=n. The naive 4-product version gives 4T(n/2)+O(n)=O(n²) — no improvement at all."
+  },
+
+  memorize:[
+    "xy = x₁y₁·2ⁿ + (x₁y₀ + x₀y₁)·2^(n/2) + x₀y₀.",
+    "The trick: x₁y₀ + x₀y₁ = (x₁+x₀)(y₁+y₀) − x₁y₁ − x₀y₀ → only THREE products.",
+    "T(n)=3T(n/2)+O(n) ⇒ O(n^log₂3) ≈ O(n^1.59). (Four products would be O(n²).)"
+  ],
+
+  cantskip:[
+    "Be able to write the expansion of xy AND the (x₁+x₀)(y₁+y₀) identity from memory.",
+    "Be able to state why three products instead of four gives 3T(n/2) and therefore n^log₂3."
+  ],
+
+  whys:[
+    {q:"Why does the four-product version give no speedup?", a:"Four half-size products yield T(n)=4T(n/2)+O(n). Master Theorem: log₂4=2, watershed n² dominates the linear combine, so T(n)=O(n²) — exactly the schoolbook bound, just dressed up recursively."},
+    {q:"Why does saving ONE multiplication change the exponent so much?", a:"The exponent is log_b a = log₂(number of recursive calls). Going from 4 calls to 3 changes it from log₂4=2 to log₂3≈1.585. Because the cost is dominated by the exponentially many leaves, shaving one branch off each node compounds across all levels."},
+    {q:"Why doesn't the extra bit in x₁+x₀ matter?", a:"x₁+x₀ can be n/2+1 bits instead of n/2, but one extra bit only adds O(1) to the size and O(n) to the additions — it doesn't change the count of recursive calls or the asymptotic combine cost, so T(n)=3T(n/2)+O(n) stands."}
+  ],
+
+  quiz:[
+    {q:"How many half-size multiplications does Karatsuba use?", opts:["2","3","4","n"], a:1, expl:"x₁y₁, x₀y₀, and (x₁+x₀)(y₁+y₀) — three. The middle term is recovered by subtraction."},
+    {q:"What is the middle coefficient x₁y₀+x₀y₁ rewritten as?", opts:["(x₁−x₀)(y₁−y₀)","(x₁+x₀)(y₁+y₀) − x₁y₁ − x₀y₀","x₁y₁ + x₀y₀","2·x₁y₁"], a:1, expl:"That's the Karatsuba identity — it reuses the two products you already computed."},
+    {q:"What is Karatsuba's running time?", opts:["O(n²)","O(n log n)","O(n^log₂3) ≈ O(n^1.59)","O(n)"], a:2, expl:"T(n)=3T(n/2)+O(n) solves to O(n^log₂3) by the Master Theorem."},
+    {q:"The naive 4-product recurrence 4T(n/2)+O(n) gives…", opts:["O(n^1.59)","O(n²) — no improvement","O(n log n)","O(n)"], a:1, expl:"log₂4=2, so it's quadratic — the same as schoolbook multiplication."}
+  ],
+
+  recall:[
+    {prompt:"State the problem on the board.", model:"\"Multiply two n-bit integers; schoolbook is O(n²) — beat it.\""},
+    {prompt:"Write the product expansion.", model:"x=x₁2^(n/2)+x₀, y=y₁2^(n/2)+y₀ ⇒ xy=x₁y₁2ⁿ+(x₁y₀+x₀y₁)2^(n/2)+x₀y₀."},
+    {prompt:"Show the trick and count the products.", model:"x₁y₀+x₀y₁=(x₁+x₀)(y₁+y₀)−x₁y₁−x₀y₀, so only 3 products: x₁y₁, x₀y₀, (x₁+x₀)(y₁+y₀)."},
+    {prompt:"State and solve the recurrence.", model:"T(n)=3T(n/2)+O(n)=O(n^log₂3)≈O(n^1.59). Four products would be O(n²)."}
+  ]
+},
+
+/* ----------------------------------------------------------------
+   5. STRASSEN — fast matrix multiplication
+---------------------------------------------------------------- */
+{
+  id:"strassen",
+  title:"Strassen's Matrix Multiplication",
+  sub:"Multiplying n×n matrices with 7 sub-products, not 8",
+  rune:"🔢", runeName:"Rune of Matrices", accent:"var(--coral)",
+
+  problem:{
+    board:"Multiply two n×n matrices A and B. The definition needs n³ multiplications. Can divide-and-conquer beat O(n³)?",
+    plain:"Computing the product C=AB by the textbook formula costs n³ scalar multiplications (one sum of n products for each of the n² entries). We want to break the matrices into blocks and recurse to lower that cost.",
+    formulas:[
+      {math:"c_ij = a_i1·b_1j + a_i2·b_2j + … + a_in·b_nj", words:"Each entry of C is the dot product of row i of A with column j of B — n multiplications, repeated for all n² entries, giving n³ total."}
+    ]
+  },
+
+  motivation:{
+    text:"Matrix multiplication underlies linear algebra: solving linear systems, Gaussian elimination, LU decomposition, graphics, ML. Faster matmul speeds up all of them.",
+    examples:[
+      {icon:"📐", text:"Solving systems of linear equations (Gaussian elimination, LU) is built from matrix multiplications."},
+      {icon:"🎮", text:"Computer graphics & simulation: transforming huge sets of points/vectors."},
+      {icon:"🤖", text:"Machine learning: neural-network layers are matrix multiplications — the dominant cost."}
+    ]
+  },
+
+  idea:{
+    divide:"Partition each n×n matrix into four (n/2)×(n/2) blocks: A=[[A11,A12],[A21,A22]], same for B and C.",
+    conquer:"The block formulas (C11=A11B11+A12B21, etc.) naively need EIGHT (n/2)-size multiplications → M(n)=8M(n/2)=Θ(n³): no gain.",
+    combine:"Strassen computes seven cleverly-chosen products P1…P7 instead of eight, then assembles the four C-blocks from them with extra additions/subtractions. Seven multiplications is the whole win.",
+    note:"Trading one multiplication for several cheaper additions: 8 mults → 7 mults changes the exponent from log₂8=3 to log₂7≈2.807."
+  },
+
+  walk:{ kind:"strassen" },
+
+  algo:{
+    name:"Strassen — the 7 products and the recombination",
+    lines:[
+      "P1 = A11·(B12 − B22)",
+      "P2 = (A11 + A12)·B22",
+      "P3 = (A21 + A22)·B11",
+      "P4 = A22·(B21 − B11)",
+      "P5 = (A11 + A22)·(B11 + B22)",
+      "P6 = (A12 − A22)·(B21 + B22)",
+      "P7 = (A11 − A21)·(B11 + B12)",
+      "",
+      "C11 = P5 + P4 − P2 + P6",
+      "C12 = P1 + P2",
+      "C21 = P3 + P4",
+      "C22 = P5 + P1 − P3 − P7"
+    ],
+    note:"7 multiplications + 18 additions/subtractions per level (the standard block method uses 8 mults + 4 adds)."
+  },
+
+  recon:{
+    title:"Rebuild the four output blocks from P1…P7",
+    lines:[
+      "C11 = P5 + P4 − P2 + P6",
+      "C12 = P1 + P2",
+      "C21 = P3 + P4",
+      "C22 = P5 + P1 − P3 − P7"
+    ]
+  },
+
+  correctness:[
+    "Each C-block expansion is verified by substituting the P-definitions and cancelling. E.g. C12 = P1+P2 = A11(B12−B22) + (A11+A12)B22 = A11B12 − A11B22 + A11B22 + A12B22 = A11B12 + A12B22 — which is the correct block formula.",
+    "Likewise C21=P3+P4=(A21+A22)B11+A22(B21−B11)=A21B11+A22B21. C11 and C22 expand similarly, with the cross terms cancelling.",
+    "So the seven products carry exactly the information of the eight block products. If n is not a power of 2, pad with zero rows/columns up to the next power of 2; that at most doubles n and keeps O(n^log₂7)."
+  ],
+
+  runtime:{
+    recurrence:"M(n) = 7·M(n/2)   (multiplications);   additions S(n)=7S(n/2)+18(n/2)²",
+    words:"Seven recursive matrix multiplications on half-size blocks; the recombination is a constant number of (n/2)×(n/2) block additions, i.e. O(n²) extra work.",
+    result:"Θ(n^(log₂7)) ≈ O(n^2.81)",
+    deriv:"Master Theorem: a=7, b=2, watershed n^log₂7≈n^2.807 dominates the O(n²) combine ⇒ Θ(n^log₂7). The 8-product block method gives 8M(n/2)=Θ(n³)."
+  },
+
+  memorize:[
+    "Standard block method = 8 multiplications ⇒ Θ(n³). Strassen = 7 multiplications ⇒ Θ(n^log₂7) ≈ O(n^2.81).",
+    "The recombination: C11=P5+P4−P2+P6, C12=P1+P2, C21=P3+P4, C22=P5+P1−P3−P7.",
+    "M(n)=7M(n/2) ⇒ Θ(n^log₂7). Non-powers of 2: pad with zeros up to the next power of 2."
+  ],
+
+  cantskip:[
+    "Memorize the four output-block formulas (C11…C22) in terms of P1…P7 — examiners love asking you to write these.",
+    "Be able to say WHY 7 vs 8 matters: it changes log₂(calls) from 3 to log₂7 ≈ 2.807.",
+    "Know that additions stay Θ(n^log₂7) too (S(n)=7S(n/2)+18(n/2)²)."
+  ],
+
+  whys:[
+    {q:"Why does 7 instead of 8 multiplications matter so much?", a:"The exponent of the running time is log_b a = log₂(number of recursive multiplications). The eight-product method has log₂8=3 (cubic). Strassen's seven gives log₂7≈2.807. Because the leaf count grows like a^depth, reducing a from 8 to 7 lowers the exponent and the whole running time, even though it costs more additions."},
+    {q:"Why don't the extra additions ruin the speedup?", a:"Additions are only Θ(n²) work per level — strictly below the watershed n^log₂7. By the Master Theorem the recursive multiplications dominate, so the additions vanish into the lower-order term. Even counting them, S(n)=7S(n/2)+18(n/2)²=Θ(n^log₂7)."},
+    {q:"Why can we assume n is a power of 2?", a:"If it isn't, pad A and B with zero rows and columns up to the next power of 2 m≤2n. The padded product's top-left block is the real answer, and m=O(n), so the running time is O((2n)^2.81)=O(n^2.81). The assumption is free."}
+  ],
+
+  quiz:[
+    {q:"How many (n/2)-size multiplications does Strassen use per level?", opts:["4","7","8","n"], a:1, expl:"Seven products P1…P7 — one fewer than the naive eight block products."},
+    {q:"Which formula gives C12?", opts:["P3 + P4","P1 + P2","P5 + P4 − P2 + P6","P5 + P1 − P3 − P7"], a:1, expl:"C12 = P1 + P2 (the other three blocks use the longer combinations)."},
+    {q:"Strassen's running time is…", opts:["Θ(n³)","Θ(n²)","Θ(n^log₂7) ≈ O(n^2.81)","Θ(n² log n)"], a:2, expl:"M(n)=7M(n/2) ⇒ Θ(n^log₂7) by the Master Theorem."},
+    {q:"What if n is not a power of 2?", opts:["The algorithm fails","Pad with zeros to the next power of 2; still O(n^2.81)","Use a different algorithm","Round n down"], a:1, expl:"Padding to m≤2n preserves the answer in the top-left block and keeps O(n^2.81)."}
+  ],
+
+  recall:[
+    {prompt:"State the problem and the baseline cost.", model:"\"Multiply two n×n matrices.\" Definition: c_ij = Σ a_ik b_kj, costing n³ multiplications. Beat O(n³)."},
+    {prompt:"Explain the block split and the naive 8-product count.", model:"Split into 2×2 blocks of size n/2. Block formulas need 8 multiplications ⇒ M(n)=8M(n/2)=Θ(n³)."},
+    {prompt:"Write the four output blocks from P1…P7.", model:"C11=P5+P4−P2+P6, C12=P1+P2, C21=P3+P4, C22=P5+P1−P3−P7."},
+    {prompt:"State the recurrence and result.", model:"M(n)=7M(n/2) ⇒ Θ(n^log₂7) ≈ O(n^2.81). Pad to a power of 2 if needed."}
+  ]
+},
+
+/* ----------------------------------------------------------------
+   6. FAST POLYNOMIAL MULTIPLICATION (FFT)
+---------------------------------------------------------------- */
+{
+  id:"fft",
+  title:"Fast Polynomial Multiplication",
+  sub:"Multiplying polynomials in O(n log n) via the FFT",
+  rune:"🌀", runeName:"Rune of Waves", accent:"var(--blue)",
+
+  problem:{
+    board:"Given polynomials A(x) (degree m−1) and B(x) (degree n−1), compute C(x)=A(x)B(x). Naive convolution is O(mn). Beat it.",
+    plain:"Multiplying two polynomials means convolving their coefficient lists. Doing it term-by-term costs O(mn). We want O(n log n) using the Fast Fourier Transform.",
+    formulas:[
+      {math:"c_k = Σ_{i+j=k} a_i·b_j   (0 ≤ k ≤ m+n−2)", words:"Each output coefficient c_k is the sum of all products a_i·b_j whose index sum equals k — this 'convolution' is what makes the naive method O(mn)."}
+    ]
+  },
+
+  motivation:{
+    text:"Fast polynomial multiplication is a fundamental primitive — and a building block for fast big-integer arithmetic (an integer is a polynomial whose 'x' is the base).",
+    examples:[
+      {icon:"🔢", text:"Big-integer multiplication: represent numbers as polynomials in the base, multiply, carry — the route to the fastest multiplication algorithms."},
+      {icon:"📶", text:"Signal processing: convolution and filtering are polynomial multiplication."},
+      {icon:"🔐", text:"Cryptography and scientific computing rely on fast convolution / FFTs."}
+    ]
+  },
+
+  idea:{
+    divide:"Don't multiply coefficients directly. EVALUATE both polynomials at the 2n complex roots of unity ω_{j,2n}=e^(2πij/2n) — turning each polynomial into a list of values (point-value form).",
+    conquer:"Evaluate fast by splitting A(x)=A_even(x²)+x·A_odd(x²): the even-indexed and odd-indexed coefficients form two half-size polynomials, each evaluated at the n-th roots of unity (because squaring a 2n-th root gives an n-th root).",
+    combine:"Multiply the value-lists POINTWISE in O(n): C(ω)=A(ω)·B(ω). Then INTERPOLATE back to coefficients using the same FFT machinery (the inverse transform). Total O(n log n).",
+    note:"Evaluate → multiply pointwise → interpolate. Both the forward and the inverse transforms are the same divide-and-conquer evaluation, each O(n log n)."
+  },
+
+  walk:{ kind:"fft" },
+
+  algo:{
+    name:"FFT-based multiplication (n = m, a power of 2)",
+    lines:[
+      "1. EVALUATE A and B at the 2n-th roots of unity ω_{j,2n}",
+      "   using the split  A(x) = A_even(x²) + x·A_odd(x²)",
+      "   →  recursion  T(n) = 2·T(n/2) + O(n)",
+      "",
+      "2. POINTWISE MULTIPLY:  for each j,",
+      "   C(ω_{j,2n}) = A(ω_{j,2n}) · B(ω_{j,2n})        // O(n)",
+      "",
+      "3. INTERPOLATE: recover c_0..c_{2n−1} from the values",
+      "   via the same FFT on the value list (inverse transform)",
+      "   →  another O(n log n)",
+      "",
+      "Total:  O(n log n)"
+    ],
+    note:"Key fact used in interpolation: for a 2n-th root ω≠1, Σ_{s} ω^s = 0; only the matching frequency survives, recovering the coefficients."
+  },
+
+  recon:{
+    title:"Order the three FFT phases",
+    lines:[
+      "Evaluate A and B at the 2n-th roots of unity (O(n log n))",
+      "Pointwise multiply the value lists: C(ω)=A(ω)B(ω) (O(n))",
+      "Interpolate the values back to coefficients (O(n log n))"
+    ]
+  },
+
+  correctness:[
+    "A degree-(2n−1) polynomial is uniquely determined by its values at 2n distinct points. The 2n-th roots of unity are 2n distinct points, so evaluation + pointwise product + interpolation recovers C exactly.",
+    "Evaluation split: A(x)=A_even(x²)+x·A_odd(x²). Squaring a 2n-th root of unity gives an n-th root: (e^(2πij/2n))²=e^(2πij/n). So evaluating A at all 2n-th roots reduces to evaluating two half-size polynomials at the n-th roots, plus O(1) per point to recombine — hence T(n)=2T(n/2)+O(n)=O(n log n).",
+    "Interpolation uses the orthogonality of roots of unity: for a 2n-th root ω≠1, Σ_{s=0}^{2n−1} ω^s = 0 (it is a root of x^(2n)−1=(x−1)(x^(2n−1)+…+1)). So when you apply the same transform to the value list, all terms cancel except the one matching frequency, giving 2n·c_k. Dividing by 2n recovers the coefficients in the same O(n log n)."
+  ],
+
+  runtime:{
+    recurrence:"T(n) = 2·T(n/2) + O(n)   (for each transform)",
+    words:"Each evaluation/interpolation splits into two half-size transforms plus O(n) to recombine — exactly the merge-sort recurrence.",
+    result:"T(n) = O(n log n)",
+    deriv:"Three phases: evaluate (O(n log n)) + pointwise multiply (O(n)) + interpolate (O(n log n)) = O(n log n), versus the naive O(n²) convolution."
+  },
+
+  memorize:[
+    "Plan: EVALUATE at the 2n-th roots of unity → MULTIPLY pointwise (O(n)) → INTERPOLATE back. Total O(n log n).",
+    "Evaluation split: A(x) = A_even(x²) + x·A_odd(x²); squaring a 2n-th root gives an n-th root, so T(n)=2T(n/2)+O(n)=O(n log n).",
+    "Interpolation key fact: for a 2n-th root ω≠1, Σ_s ω^s = 0; only the matching coefficient survives (giving 2n·c_k)."
+  ],
+
+  cantskip:[
+    "Know the three-phase structure (evaluate, pointwise multiply, interpolate) and that each transform is O(n log n).",
+    "Be able to state A(x)=A_even(x²)+x·A_odd(x²) and why squaring a 2n-th root yields an n-th root.",
+    "Know the orthogonality fact Σ_s ω^s = 0 (ω≠1) that powers the interpolation."
+  ],
+
+  whys:[
+    {q:"Why evaluate at roots of unity instead of multiplying coefficients?", a:"In point-value form, multiplying two polynomials is just multiplying their values pointwise — O(n) instead of O(n²). The roots of unity are special points where the EVALUATION itself can be done in O(n log n) by divide-and-conquer (and inverted just as fast), so the whole detour through value-space is cheaper than the direct method."},
+    {q:"Why does squaring a 2n-th root of unity give an n-th root?", a:"(e^(2πij/2n))² = e^(2πi·2j/2n) = e^(2πij/n), which is by definition an n-th root of unity. That's exactly why A(x)=A_even(x²)+x·A_odd(x²) lets us evaluate the two half-size pieces at the n-th roots and recombine — the recursion shrinks by half each time."},
+    {q:"Why does interpolation use Σ ω^s = 0?", a:"To invert the transform you apply it again to the value list. The cross terms are geometric sums of powers of roots of unity, which collapse to 0 unless the frequency matches (because ω is a root of x^(2n−1)+…+1 when ω≠1). Only the matching term survives, equal to 2n·c_k, so dividing by 2n recovers each coefficient."}
+  ],
+
+  quiz:[
+    {q:"What are the three phases of FFT-based multiplication?", opts:["Sort, merge, count","Evaluate at roots of unity, multiply pointwise, interpolate","Split, multiply 7 ways, recombine","Divide, min, max"], a:1, expl:"Evaluate both polynomials at the 2n-th roots of unity, multiply the value lists pointwise (O(n)), then interpolate back to coefficients."},
+    {q:"The evaluation step uses which decomposition?", opts:["A(x)=A(x)+B(x)","A(x)=A_even(x²)+x·A_odd(x²)","A(x)=x·A(x)","A(x)=A(x)²"], a:1, expl:"Splitting into even- and odd-indexed coefficients and substituting x² halves the problem, giving T(n)=2T(n/2)+O(n)."},
+    {q:"Why is squaring a 2n-th root of unity useful?", opts:["It gives 0","It gives an n-th root of unity, halving the problem","It gives 1 always","It removes the imaginary part"], a:1, expl:"(e^(2πij/2n))²=e^(2πij/n), an n-th root — so the two half-size polynomials are evaluated at n-th roots."},
+    {q:"Overall running time vs naive?", opts:["O(n log n) vs O(n²)","O(n²) vs O(n³)","O(n) vs O(n log n)","O(n³) vs O(n²)"], a:0, expl:"The FFT gives O(n log n); the direct convolution is O(mn)=O(n²)."}
+  ],
+
+  recall:[
+    {prompt:"State the problem on the board.", model:"\"Compute C(x)=A(x)B(x) where c_k=Σ_{i+j=k} a_i b_j.\" Naive is O(mn); we want O(n log n)."},
+    {prompt:"Give the three-phase plan.", model:"Evaluate A,B at the 2n-th roots of unity (O(n log n)); multiply the value lists pointwise (O(n)); interpolate back to coefficients (O(n log n))."},
+    {prompt:"Explain the fast evaluation.", model:"A(x)=A_even(x²)+x·A_odd(x²). Squaring a 2n-th root gives an n-th root, so each transform is T(n)=2T(n/2)+O(n)=O(n log n)."},
+    {prompt:"State the interpolation fact and the total time.", model:"For a 2n-th root ω≠1, Σ_s ω^s=0, so only the matching coefficient survives (2n·c_k). Total: O(n log n)."}
+  ]
+},
+
+/* ----------------------------------------------------------------
+   7. CLOSEST PAIR OF POINTS
+---------------------------------------------------------------- */
+{
+  id:"closest",
+  title:"Closest Pair of Points",
+  sub:"The closest two points in the plane in O(n log n)",
+  rune:"📍", runeName:"Rune of Distance", accent:"var(--mint)",
+
+  problem:{
+    board:"Given n points P={p₁,…,p_n} in the plane, find the pair whose Euclidean distance is smallest.",
+    plain:"We have n dots on a 2-D plane. We must find the two dots that are closest together. Checking all pairs is O(n²); we want O(n log n).",
+    formulas:[
+      {math:"minimize  dist(p_a, p_b)  over all pairs a ≠ b", words:"Find the two points whose straight-line distance is the smallest of all pairs. The brute-force way compares every pair — that's about n²/2 comparisons."}
+    ]
+  },
+
+  motivation:{
+    text:"A founding problem of computational geometry (Shamos & Hoey, early 1970s). 'Find the nearest neighbours' shows up across graphics and data.",
+    examples:[
+      {icon:"🖥️", text:"Computer graphics & computer vision: detecting near-coincident points/features."},
+      {icon:"🗺️", text:"Geographic information systems: nearest facilities, collision/proximity queries."},
+      {icon:"🧬", text:"Molecular modelling and clustering: which two atoms/items sit closest together."}
+    ]
+  },
+
+  idea:{
+    divide:"Pre-sort points by x and by y once. Draw a vertical line ℓ splitting the points into left half Q_L and right half Q_R (sizes ⌈n/2⌉ and ⌊n/2⌋).",
+    conquer:"Recursively find the closest pair in Q_L (distance δ_L) and in Q_R (distance δ_R). Let δ = min(δ_L, δ_R).",
+    combine:"The only thing left to check is a pair straddling ℓ that beats δ. Both such points must lie within distance δ of ℓ — a thin strip. Inside the strip, each point needs to be compared with only the next 7 points (sorted by y). Update δ if a closer cross pair is found.",
+    note:"The 'only 7 neighbours' bound is the magic that keeps the combine step O(n) instead of O(n²)."
+  },
+
+  walk:{ kind:"closest" },
+
+  algo:{
+    name:"ClosestPair(Q, X, Y)  — X sorted by x, Y by y",
+    lines:[
+      "if |Q| ≤ 3:  brute force all pairs, return min distance",
+      "",
+      "split by vertical line ℓ into Q_L, Q_R (and X_L,X_R,Y_L,Y_R)",
+      "δ_L = ClosestPair(Q_L, X_L, Y_L)",
+      "δ_R = ClosestPair(Q_R, X_R, Y_R)",
+      "δ = min(δ_L, δ_R)",
+      "",
+      "build Y' = points within distance δ of ℓ (kept sorted by y)",
+      "for each p in Y':",
+      "    compare p with the next 7 points in Y'   // at most 7!",
+      "    update δ if a closer pair is found",
+      "return δ"
+    ],
+    note:"Pre-sorting by x and y once (O(n log n)) lets every recursive call get its sorted sub-arrays in O(n), so no re-sorting inside the recursion."
+  },
+
+  recon:{
+    title:"Rebuild the recursive skeleton",
+    lines:[
+      "if |Q| ≤ 3: brute force, return min distance",
+      "split by ℓ into Q_L, Q_R",
+      "δ_L = ClosestPair(Q_L,...) ;  δ_R = ClosestPair(Q_R,...)",
+      "δ = min(δ_L, δ_R)",
+      "build strip Y' within δ of ℓ; check next 7 neighbours each",
+      "return updated δ"
+    ]
+  },
+
+  correctness:[
+    "The closest pair is either entirely in Q_L, entirely in Q_R (both handled by recursion, giving δ), or it straddles ℓ.",
+    "A straddling pair closer than δ must have both endpoints within distance δ of ℓ, so it lives in the δ-wide strip Y'. We only need to beat δ, so only the strip matters.",
+    "Within the strip, sort by y. Claim: for a point Y'[i], any point Y'[j] within δ that lies above it is among the next 7. Proof: such pairs sit in a δ×2δ rectangle. Partition that rectangle into eight δ/2 × δ/2 squares. Each square can hold at most one point, because the farthest two points in a δ/2 square are √2·δ/2 = δ/√2 < δ apart — but every point already inside Q_L (or Q_R) is ≥ δ from its same-side neighbours. So at most 8 points total (including p), i.e. at most 7 others to check.",
+    "Therefore each strip point does O(1) work, the strip scan is O(n), and the cross-check is correct."
+  ],
+
+  runtime:{
+    recurrence:"T(n) = 2·T(n/2) + O(n)   (n > 3),   T(n)=O(1) for n ≤ 3",
+    words:"Two half-size recursive calls, plus O(n) to split, build the sorted sub-arrays and the strip Y', and do the bounded 7-neighbour scan.",
+    result:"T(n) = O(n log n)",
+    deriv:"Merge-sort recurrence ⇒ O(n log n). The one-time initial sorting by x and y is also O(n log n), so the total stays O(n log n)."
+  },
+
+  memorize:[
+    "Split by a vertical line ℓ; recurse left and right; δ = min(δ_L, δ_R).",
+    "Cross pairs closer than δ live in a strip of width δ around ℓ; sorted by y, each point compares with only the next 7.",
+    "The '7' comes from a δ×2δ rectangle split into eight δ/2-squares, each holding ≤1 point (a square's diagonal δ/√2 < δ). T(n)=2T(n/2)+O(n)=O(n log n)."
+  ],
+
+  cantskip:[
+    "Be able to draw the δ-strip and the δ×2δ rectangle with its 8 squares, and explain why each square holds at most one point.",
+    "Know that points are pre-sorted by x and y ONCE so no re-sorting happens inside the recursion.",
+    "Know the history hook: Shamos & Hoey, early 1970s, founding computational geometry."
+  ],
+
+  whys:[
+    {q:"Why must a closer cross pair lie within δ of ℓ?", a:"If a point is more than δ away from ℓ horizontally, then any point on the OTHER side of ℓ is also more than δ away just in the x-direction, so the straight-line distance exceeds δ. Such a pair can't beat δ, so we can safely ignore everything outside the δ-wide strip."},
+    {q:"Why exactly 7 neighbours and not more?", a:"Two strip points within δ of each other (and one above the other) fit in a δ-wide, 2δ-tall rectangle. Cut it into 8 squares of side δ/2. A single square's farthest-apart points are δ/√2 ≈ 0.707δ < δ apart, but two points on the SAME side of ℓ are already at least δ apart (the recursion guaranteed it). So no square holds two same-side points — at most 8 points fill the rectangle, leaving at most 7 to compare with the current point."},
+    {q:"Why pre-sort by x and y before the recursion?", a:"Each recursive level needs its points sorted by x (to split) and by y (for the strip scan). Sorting inside every call would add an O(n log n) factor per level, ruining the bound. Sorting once up front (O(n log n)) and just slicing the sorted arrays in O(n) per call keeps the recurrence at 2T(n/2)+O(n)."}
+  ],
+
+  quiz:[
+    {q:"After recursing on both halves you have δ=min(δ_L,δ_R). What's left to check?", opts:["Nothing","Pairs straddling the dividing line, within a δ-wide strip","All pairs again","Only the leftmost points"], a:1, expl:"Only cross pairs that could beat δ remain, and they must lie within distance δ of the line ℓ — the strip."},
+    {q:"Within the y-sorted strip, how many neighbours must each point be compared against?", opts:["All others","At most 7","At most 2","log n"], a:1, expl:"A δ×2δ rectangle splits into 8 squares each holding ≤1 point, so at most 7 others to check — making the scan O(n)."},
+    {q:"Why can each δ/2-square hold at most one point?", opts:["By assumption","Its diagonal δ/√2 < δ, but same-side points are ≥ δ apart","Squares are too small to draw","Points repel each other"], a:1, expl:"The largest distance inside a δ/2-square is δ/√2 < δ, yet same-side points are already ≥ δ apart from the recursion — so two can't share a square."},
+    {q:"Total running time including the initial sort?", opts:["O(n²)","O(n log n)","O(n)","O(n log² n)"], a:1, expl:"The recurrence 2T(n/2)+O(n)=O(n log n), and the one-time sort is also O(n log n)."}
+  ],
+
+  recall:[
+    {prompt:"State the problem and the brute-force cost.", model:"\"Given n points in the plane, find the closest pair.\" Brute force compares all pairs: O(n²). Goal: O(n log n)."},
+    {prompt:"Describe the divide and conquer.", model:"Pre-sort by x and y. Split by vertical line ℓ into halves; recurse to get δ_L, δ_R; δ=min. Then check cross pairs in the δ-wide strip."},
+    {prompt:"Explain the 7-neighbour bound.", model:"Cross-pairs beating δ lie in a δ-strip. Sorted by y, two close points fit a δ×2δ rectangle split into 8 δ/2-squares, each holding ≤1 point (diagonal δ/√2<δ). So check only the next 7."},
+    {prompt:"State and solve the recurrence.", model:"T(n)=2T(n/2)+O(n)=O(n log n); the initial sort is also O(n log n)."}
+  ]
+}
+
+];
+/* ============================================================
+   THE RECURSION TRIALS — game engine
+   ============================================================ */
+
+/* ---------- safe storage (works downloaded; degrades in sandbox) ---------- */
+const Store = (() => {
+  let mem = {}, ok = false;
+  try { localStorage.setItem('__t','1'); localStorage.removeItem('__t'); ok = true; } catch(e){ ok = false; }
+  return {
+    get(k){ try { return ok ? localStorage.getItem(k) : (k in mem ? mem[k] : null); } catch(e){ return k in mem ? mem[k] : null; } },
+    set(k,v){ try { ok ? localStorage.setItem(k,v) : (mem[k]=v); } catch(e){ mem[k]=v; } }
+  };
+})();
+
+/* ---------- collectables ---------- */
+const COLLECTABLES = [
+  {id:"r_inversions", icon:"🪞", name:"Rune of Mirrors", desc:"Mastered Counting Inversions"},
+  {id:"r_maxprofit",  icon:"📈", name:"Rune of Fortune", desc:"Mastered Maximum Profit"},
+  {id:"r_master",     icon:"📜", name:"Rune of Law", desc:"Mastered the Master Theorem"},
+  {id:"r_karatsuba",  icon:"✖️", name:"Rune of Numbers", desc:"Mastered Karatsuba"},
+  {id:"r_strassen",   icon:"🔢", name:"Rune of Matrices", desc:"Mastered Strassen"},
+  {id:"r_fft",        icon:"🌀", name:"Rune of Waves", desc:"Mastered Fast Polynomial Multiplication"},
+  {id:"r_closest",    icon:"📍", name:"Rune of Distance", desc:"Mastered Closest Pair"},
+  {id:"golden_chalk", icon:"🖍️", name:"Golden Chalk", desc:"Scored 100% on any quiz"},
+  {id:"curious",      icon:"❔", name:"Curious Mind", desc:"Opened 10 “why?” explainers"},
+  {id:"streak3",      icon:"🔥", name:"Kindled Flame", desc:"Studied 3 days in a row"},
+  {id:"examiner",     icon:"🎓", name:"Examiner's Seal", desc:"Survived the Oral Exam boss"},
+  {id:"perfect",      icon:"👑", name:"Crown of Recursion", desc:"100% on every chapter quiz"}
+];
+
+/* ---------- lesson stage order ---------- */
+const STAGES = [
+  {k:"problem",     label:"The Problem",   num:"01"},
+  {k:"motivation",  label:"Why it matters",num:"02"},
+  {k:"idea",        label:"The Idea",      num:"03"},
+  {k:"walk",        label:"Walkthrough",   num:"04"},
+  {k:"algo",        label:"The Algorithm", num:"05"},
+  {k:"recon",       label:"Rebuild it",    num:"06"},
+  {k:"correctness", label:"Why correct",   num:"07"},
+  {k:"runtime",     label:"Running time",  num:"08"},
+  {k:"recall",      label:"Blackboard",    num:"09"},
+  {k:"quiz",        label:"Trial",         num:"10"}
+];
+
+/* ============================================================
+   GAME
+   ============================================================ */
+const Game = {
+  state:null,
+  cur:{chapter:null, stage:0},
+  _viz:{},
+
+  /* ---- lifecycle ---- */
+  init(){
+    this.load();
+    this.touchStreak();
+    this.go('home');
+    this.refreshHUD();
+  },
+  load(){
+    let s = null;
+    try { s = JSON.parse(Store.get('rt_save')||'null'); } catch(e){}
+    this.state = s || {
+      player:"Scholar", xp:0, lvl:1, streak:0, lastDay:null,
+      mastery:{}, coll:{}, whys:0, examWins:0
+    };
+    if(!this.state.mastery) this.state.mastery = {};
+    if(!this.state.coll) this.state.coll = {};
+  },
+  save(){ try { Store.set('rt_save', JSON.stringify(this.state)); } catch(e){} },
+
+  touchStreak(){
+    const today = new Date().toDateString();
+    if(this.state.lastDay !== today){
+      const y = new Date(Date.now()-864e5).toDateString();
+      this.state.streak = (this.state.lastDay===y) ? (this.state.streak+1) : 1;
+      this.state.lastDay = today;
+      if(this.state.streak>=3) this.grant('streak3');
+      this.save();
+    }
+  },
+
+  /* ---- XP / level ---- */
+  need(lvl){ return 70 + lvl*30; },
+  award(xp, reason){
+    this.state.xp += xp;
+    let leveled = false;
+    while(this.state.xp >= this.need(this.state.lvl)){
+      this.state.xp -= this.need(this.state.lvl);
+      this.state.lvl++; leveled = true;
+    }
+    this.save(); this.refreshHUD();
+    if(reason) this.toast(`+${xp} XP · ${reason}`);
+    if(leveled) this.toast(`Level ${this.state.lvl}! New rank unlocked`, 'gold');
+  },
+  grant(id){
+    if(this.state.coll[id]) return false;
+    this.state.coll[id] = true; this.save(); this.refreshHUD();
+    const c = COLLECTABLES.find(x=>x.id===id);
+    if(c) this.toast(`${c.icon} Collected: ${c.name}`, 'gold');
+    return true;
+  },
+
+  refreshHUD(){
+    const s=this.state;
+    document.getElementById('hud-streak').textContent=s.streak;
+    document.getElementById('hud-lvl').textContent=s.lvl;
+    document.getElementById('hud-xp').textContent=`${s.xp}/${this.need(s.lvl)}`;
+    document.getElementById('hud-xpbar').style.width=Math.min(100,100*s.xp/this.need(s.lvl))+'%';
+    let runes=0; CHAPTERS.forEach(c=>{ if(this.state.coll['r_'+c.id]) runes++; });
+    document.getElementById('hud-runes').textContent=runes;
+  },
+
+  /* ---- mastery helpers ---- */
+  m(id){ if(!this.state.mastery[id]) this.state.mastery[id]={stages:{},quiz:0,recall:0,done:false,medal:null}; return this.state.mastery[id]; },
+  markStage(cid,key){
+    const m=this.m(cid);
+    if(!m.stages[key]){ m.stages[key]=true; this.award(8,STAGES.find(s=>s.k===key).label); }
+    this.save();
+  },
+  computeMedal(cid){
+    const m=this.m(cid);
+    const allStages = STAGES.every(s=>m.stages[s.k]);
+    let medal=null;
+    if(allStages) medal='bronze';
+    if(allStages && m.quiz>=75) medal='silver';
+    if(allStages && m.quiz>=100 && m.recall>=2) medal='gold';
+    m.medal=medal;
+    if(allStages && !m.done){ m.done=true; this.grant('r_'+cid); this.award(40,'Chapter complete'); }
+    // crown check
+    const allPerfect = CHAPTERS.every(c=>this.m(c.id).quiz>=100);
+    if(allPerfect) this.grant('perfect');
+    this.save();
+    return medal;
+  },
+
+  /* ---- toast & particles ---- */
+  toast(msg,type){
+    const w=document.getElementById('toasts');
+    const t=document.createElement('div');
+    t.className='toast'+(type?(' '+type):'');
+    t.innerHTML=`<span>${msg}</span>`;
+    w.appendChild(t);
+    setTimeout(()=>t.remove(),3000);
+  },
+  burst(x,y,color){
+    color=color||'var(--chalk)';
+    for(let i=0;i<14;i++){
+      const p=document.createElement('div');
+      p.className='chalk-particle'; p.style.left=x+'px'; p.style.top=y+'px';
+      p.style.background=color;
+      document.body.appendChild(p);
+      const ang=Math.random()*Math.PI*2, sp=2+Math.random()*5;
+      let vx=Math.cos(ang)*sp, vy=Math.sin(ang)*sp-2, px=x, py=y, op=1;
+      const tick=()=>{ vy+=0.22; px+=vx; py+=vy; op-=0.025;
+        p.style.transform=`translate(${px-x}px,${py-y}px)`; p.style.opacity=op;
+        if(op>0) requestAnimationFrame(tick); else p.remove(); };
+      requestAnimationFrame(tick);
+    }
+  },
+  burstAt(ev,color){ if(ev){ this.burst(ev.clientX,ev.clientY,color); } },
+
+  /* ---- navigation ---- */
+  go(view, arg){
+    const app=document.getElementById('app');
+    window.scrollTo({top:0,behavior:'smooth'});
+    if(view==='home') app.innerHTML=this.renderHome();
+    else if(view==='lesson'){ this.cur={chapter:arg, stage:0}; this.renderLesson(); }
+    else if(view==='exam'){ app.innerHTML=this.renderExamIntro(); }
+    else if(view==='review'){ app.innerHTML=this.renderReviewIntro(); }
+  },
+
+  /* ============================================================
+     HOME / MAP
+     ============================================================ */
+  renderHome(){
+    const s=this.state;
+    let runes=0; CHAPTERS.forEach(c=>{ if(this.state.coll['r_'+c.id]) runes++; });
+    const allRunes = runes>=CHAPTERS.length;
+    const greet = runes===0 ? "Your trial begins" : allRunes ? "All seven runes are yours" : `${runes} of 7 runes earned`;
+
+    let nodes='';
+    CHAPTERS.forEach((c,i)=>{
+      const m=this.m(c.id);
+      const doneStages=STAGES.filter(st=>m.stages[st.k]).length;
+      const prog=Math.round(100*doneStages/STAGES.length);
+      const medal=m.medal;
+      const crest = medal? `<div class="crest ${medal}">${medal==='gold'?'★ Gold':medal==='silver'?'Silver':'Bronze'}</div>`:'';
+      let pips=''; for(let p=0;p<STAGES.length;p++) pips+=`<span class="pip ${p<doneStages?'on':''}"></span>`;
+      nodes+=`
+      <div class="node" style="--accent:${c.accent}" onclick="Game.go('lesson','${c.id}')">
+        ${crest}
+        <div class="rune">${c.rune}</div>
+        <div class="ntitle">${c.title}</div>
+        <div class="nsub">${c.sub}</div>
+        <div class="tag">${c.runeName}</div>
+        <div class="pips">${pips}</div>
+        <div class="barthin"><i style="width:${prog}%"></i></div>
+      </div>`;
+    });
+
+    return `<div class="view">
+      <div class="hero">
+        <div class="eyebrow">${greet}</div>
+        <h1 class="chalk-h h-xl"><span class="underline-chalk">Divide &amp; Conquer</span></h1>
+        <p class="lede">A blackboard-trainer for your oral exam. Master each algorithm's <b style="color:var(--yellow)">mathematics</b>, learn to <b style="color:var(--yellow)">write the problem on the board</b>, explain it to a beginner, and survive the Examiner. Seven runes stand between you and the door.</p>
+        <div class="cta-row">
+          <button class="btn btn-primary" onclick="Game.go('lesson','${CHAPTERS[0].id}')">${runes===0?'Begin the first trial':'Continue studying'}</button>
+          <button class="btn btn-ghost" onclick="Game.go('exam')">⚔️ Oral Exam (random topic)</button>
+          <button class="btn btn-ghost" onclick="Game.go('review')">🔁 Quick review deck</button>
+        </div>
+      </div>
+
+      <div class="dialogue">
+        <div class="ava">🦉</div>
+        <div class="say"><span class="who">Professor Theta</span>
+        ${allRunes
+          ? "Every rune is lit. You are ready — step to the board and face the Examiner whenever you wish."
+          : "Welcome, scholar. Pick any rune below — the Examiner chooses topics at random, so eventually you'll want all seven. For each, I'll make sure you can <b>write the problem</b>, <b>explain the idea to a first-timer</b>, <b>give the algorithm</b>, and <b>justify the running time</b>. Tap a <span style='color:var(--violet)'>“why?”</span> anytime you want me to go deeper."}
+        </div>
+      </div>
+
+      <div class="section-label">The Seven Runes</div>
+      <div class="map-grid">${nodes}</div>
+
+      <div class="section-label" style="margin-top:30px">When you feel ready</div>
+      <div class="map-grid">
+        <div class="node" style="--accent:var(--violet)" onclick="Game.go('exam')">
+          <div class="rune">🎓</div>
+          <div class="ntitle">The Oral Exam</div>
+          <div class="nsub">Boss fight. A random topic, then the Examiner's escalating questions — just like the real thing.</div>
+          <div class="tag">${this.state.coll['examiner']?'Seal earned':'Boss · unsealed'}</div>
+        </div>
+        <div class="node" style="--accent:var(--mint)" onclick="Game.go('review')">
+          <div class="rune">🔁</div>
+          <div class="ntitle">Review Deck</div>
+          <div class="nsub">Rapid flashcards of every must-memorize line. Perfect for the night before.</div>
+          <div class="tag">Retention</div>
+        </div>
+        <div class="node" style="--accent:var(--yellow)" onclick="Game.openCollection()">
+          <div class="rune">🎒</div>
+          <div class="ntitle">Collection</div>
+          <div class="nsub">Runes, medals and trophies you've earned so far.</div>
+          <div class="tag">${Object.keys(this.state.coll).length} / ${COLLECTABLES.length}</div>
+        </div>
+      </div>
+    </div>`;
+  },
+
+  /* ---- collection modal ---- */
+  openCollection(){
+    let grid='';
+    COLLECTABLES.forEach(c=>{
+      const has=this.state.coll[c.id];
+      grid+=`<div class="coll ${has?'':'locked'}">
+        <div class="ci">${has?c.icon:'❓'}</div>
+        <div class="cn">${has?c.name:'Locked'}</div>
+        <div class="cd">${has?c.desc:'???'}</div></div>`;
+    });
+    const m=document.getElementById('modal');
+    m.innerHTML=`<button class="closex" onclick="Game.closeModal()">✕</button>
+      <h2>Collection</h2>
+      <div class="muted" style="font-size:14px">Earn runes by completing chapters, plus trophies for streaks, perfect quizzes, curiosity and beating the Examiner.</div>
+      <div class="coll-grid">${grid}</div>`;
+    document.getElementById('modal-bg').classList.add('show');
+  },
+  closeModal(){ document.getElementById('modal-bg').classList.remove('show'); },
+};
+document.getElementById('modal-bg').addEventListener('click',e=>{ if(e.target.id==='modal-bg') Game.closeModal(); });
+/* ============================================================
+   THE RECURSION TRIALS — engine part 2
+   (lesson flow, visualizers, challenges, exam boss, review)
+   Attaches to the Game object defined in part 1.
+   ============================================================ */
+Object.assign(Game, {
+
+  chap(){ return CHAPTERS.find(c=>c.id===this.cur.chapter); },
+
+  /* ---------- code highlighter ---------- */
+  hl(line){
+    const esc=s=>s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+    let code=line, comment='';
+    const ci=line.indexOf('//');
+    if(ci>=0){ code=line.slice(0,ci); comment=line.slice(ci); }
+    code=esc(code)
+      .replace(/\b(if|then|else|for|to|do|while|return|and|AND|min|max|copy)\b/g,'<span class="kw">$1</span>')
+      .replace(/\b([A-Z][A-Za-z0-9]+)(?=\()/g,'<span class="fn">$1</span>');
+    let out=code;
+    if(comment) out+='<span class="cm">'+esc(comment)+'</span>';
+    return out||'&nbsp;';
+  },
+
+  /* ---------- why? expanders ---------- */
+  renderWhys(ch){
+    if(!ch.whys||!ch.whys.length) return '';
+    let h='<div class="section-label">Ask Professor Theta “why?”</div>';
+    ch.whys.forEach((w,i)=>{
+      h+=`<div class="why" id="why-${i}">
+        <button onclick="Game.toggleWhy(${i})">${w.q}</button>
+        <div class="ans">${w.a}</div>
+      </div>`;
+    });
+    return h;
+  },
+  toggleWhy(i){
+    const el=document.getElementById('why-'+i);
+    if(!el) return;
+    el.classList.toggle('open');
+    if(el.classList.contains('open')){
+      const key=this.cur.chapter+':'+i;
+      this._whysOpened=this._whysOpened||{};
+      if(!this._whysOpened[key]){
+        this._whysOpened[key]=true;
+        this.state.whys=(this.state.whys||0)+1;
+        if(this.state.whys>=10) this.grant('curious');
+        this.save();
+      }
+    }
+  },
+
+  /* ============================================================
+     LESSON
+     ============================================================ */
+  renderLesson(){
+    const ch=this.chap(); const st=STAGES[this.cur.stage];
+    const m=this.m(ch.id);
+    let rail='';
+    STAGES.forEach((s,i)=>{
+      const cls = i===this.cur.stage ? 'cur' : (m.stages[s.k] ? 'done' : '');
+      rail+=`<div class="srail ${cls}" onclick="Game.cur.stage=${i};Game.renderLesson()">
+        <span class="num">${s.num}</span>${s.label}${m.stages[s.k]&&i!==this.cur.stage?' ✓':''}</div>`;
+    });
+
+    const app=document.getElementById('app');
+    app.innerHTML=`<div class="view">
+      <div class="lesson-top">
+        <div class="rune">${ch.rune}</div>
+        <div>
+          <div class="eyebrow">Rune ${this.cur.stage+1>0?'':''}· ${ch.runeName}</div>
+          <h2 class="chalk-h" style="font-size:30px;margin:0">${ch.title}</h2>
+        </div>
+        <div style="flex:1"></div>
+        <button class="btn btn-ghost" onclick="Game.go('home')">↩ Map</button>
+      </div>
+      <div class="steps-rail">${rail}</div>
+      <div class="board"><div class="board-inner">
+        <div class="kicker">${st.num} — ${st.label}</div>
+        ${this.stageBody(ch,st.k)}
+      </div></div>
+      <div class="lesson-nav">
+        <button class="btn btn-ghost" onclick="Game.lessonNav(-1)">${this.cur.stage===0?'↩ Back to map':'← Previous'}</button>
+        <button class="btn btn-primary" onclick="Game.lessonNav(1)">${this.cur.stage===STAGES.length-1?'Finish chapter ✓':'Next step →'}</button>
+      </div>
+    </div>`;
+
+    this.markStage(ch.id, st.k);
+    // run any interactive init for this stage
+    if(st.k==='walk') this.initViz(ch);
+    if(st.k==='recon') this.initRecon(ch);
+  },
+
+  lessonNav(dir){
+    const ns=this.cur.stage+dir;
+    if(ns<0){ this.go('home'); return; }
+    if(ns>=STAGES.length){ this.finishChapter(); return; }
+    this.cur.stage=ns; this.renderLesson();
+  },
+  finishChapter(){
+    const ch=this.chap();
+    const medal=this.computeMedal(ch.id);
+    this.go('home');
+    this.toast(`${ch.title} complete${medal?(' · '+medal.toUpperCase()+' medal'):''}`,'gold');
+  },
+
+  /* ---------- stage bodies ---------- */
+  stageBody(ch,k){
+    switch(k){
+      case 'problem':     return this.sbProblem(ch);
+      case 'motivation':  return this.sbMotivation(ch);
+      case 'idea':        return this.sbIdea(ch);
+      case 'walk':        return this.sbWalk(ch);
+      case 'algo':        return this.sbAlgo(ch);
+      case 'recon':       return this.sbRecon(ch);
+      case 'correctness': return this.sbCorrectness(ch);
+      case 'runtime':     return this.sbRuntime(ch);
+      case 'recall':      return this.sbRecall(ch);
+      case 'quiz':        return this.sbQuiz(ch);
+    }
+    return '';
+  },
+
+  fx(f){ return `<div class="fx"><div class="math">${f.math.replace(/</g,'&lt;')}</div><div class="words">${f.words}</div></div>`; },
+
+  sbProblem(ch){
+    let h=`<h3 class="chalk-h">Write this on the board</h3>
+      <div class="memo"><div class="line">${ch.problem.board}</div></div>
+      <p class="prose">${ch.problem.plain}</p>`;
+    ch.problem.formulas.forEach(f=>h+=this.fx(f));
+    h+=`<div class="cantskip"><span class="tagx">Say this aloud</span>Start every answer by stating the problem precisely and writing the formula — the Examiner expects the mathematical set-up first, before any algorithm.</div>`;
+    return h;
+  },
+
+  sbMotivation(ch){
+    let h=`<p class="prose">${ch.motivation.text}</p><div class="examples">`;
+    ch.motivation.examples.forEach(e=>h+=`<div class="ex"><span class="dot">${e.icon}</span><span>${e.text}</span></div>`);
+    h+=`</div><div class="cantskip"><span class="tagx">Examiner loves this</span>Be ready with at least one concrete real-world use. "What is it good for?" is a near-guaranteed follow-up.</div>`;
+    return h;
+  },
+
+  sbIdea(ch){
+    let h=`<h3 class="chalk-h">The divide-and-conquer idea</h3>
+      <div class="fx"><div class="math">DIVIDE</div><div class="words">${ch.idea.divide}</div></div>
+      <div class="fx"><div class="math">CONQUER</div><div class="words">${ch.idea.conquer}</div></div>
+      <div class="fx"><div class="math">COMBINE</div><div class="words">${ch.idea.combine}</div></div>`;
+    if(ch.idea.note) h+=`<p class="prose"><b>The clever bit —</b> ${ch.idea.note}</p>`;
+    h+=this.renderWhys(ch);
+    return h;
+  },
+
+  sbWalk(ch){
+    const intro={
+      inversions:"Both halves come back <b>sorted</b>. Step through the merge and watch the inversion counter. Each time a <span style='color:var(--coral)'>right</span> element is output, it jumps over every left element still waiting.",
+      maxprofit:"Split the prices in half. The best trade is fully-left, fully-right, or <b>crossing</b>. Reveal the crossing trade: buy at the left-minimum, sell at the right-maximum.",
+      master:"No array to walk — instead, a calculator. Type a recurrence (or load a textbook example) and watch which of the three cases fires.",
+      karatsuba:"Multiply 1101 × 1011 in binary. Split each number into high/low halves and watch three recursive products do the work of four.",
+      strassen:"Multiply two 2×2 matrices. Reveal Strassen's seven products one by one, then recombine them into C.",
+      fft:"Three phases: evaluate both polynomials at the roots of unity, multiply pointwise, then interpolate back. Step through each phase.",
+      closest:"Points in the plane. Drop the dividing line ℓ, take δ = min of the two sides, then inspect the δ-strip and the famous 'only 7 neighbours' rectangle."
+    }[ch.walk.kind]||'';
+    return `<h3 class="chalk-h">Walk the example</h3><p class="prose">${intro}</p><div id="vizhost" class="viz"></div>`;
+  },
+
+  sbAlgo(ch){
+    let code=ch.algo.lines.map(l=>this.hl(l)).join('\n');
+    let h=`<h3 class="chalk-h">${ch.algo.name}</h3>
+      <div class="code">${code}</div>`;
+    if(ch.algo.note) h+=`<div class="cantskip"><span class="tagx">The whole trick</span>${ch.algo.note}</div>`;
+    return h;
+  },
+
+  sbRecon(ch){
+    return `<h3 class="chalk-h">${ch.recon.title}</h3>
+      <p class="prose">Tap the lines in the <b>correct order</b> to rebuild the core of the algorithm. Tap a placed line to send it back.</p>
+      <div id="reconhost"></div>`;
+  },
+
+  sbCorrectness(ch){
+    let h=`<h3 class="chalk-h">Why it's correct</h3>`;
+    ch.correctness.forEach((c,i)=>h+=`<div class="fx"><div class="math">${i+1}</div><div class="words">${c}</div></div>`);
+    h+=`<div class="cantskip"><span class="tagx">Cannot skip</span>Knowing the algorithm is not enough to pass — you must be able to <b>justify why it produces the right answer</b>. Rehearse this argument out loud.</div>`;
+    return h;
+  },
+
+  sbRuntime(ch){
+    let h=`<h3 class="chalk-h">Running time</h3>
+      <div class="fx"><div class="math">${ch.runtime.recurrence}</div><div class="words">${ch.runtime.words}</div></div>
+      <div class="memo"><div class="line"><b>Result:</b> ${ch.runtime.result}</div></div>
+      <p class="prose">${ch.runtime.deriv}</p>`;
+    if(ch.upgrade){
+      h+=`<div class="section-label">${ch.upgrade.title}</div>
+        <p class="prose">${ch.upgrade.text}</p>
+        <div class="fx"><div class="math">${ch.upgrade.recurrence}</div><div class="words">${ch.upgrade.words}</div></div>
+        <div class="memo"><div class="line"><b>Upgraded result:</b> ${ch.upgrade.result}</div></div>
+        <p class="prose">${ch.upgrade.deriv}</p>`;
+    }
+    if(ch.gap){
+      h+=`<div class="section-label">${ch.gap.title}</div>
+        <p class="prose">${ch.gap.text}</p>
+        <div class="memo"><div class="line">${ch.gap.result}</div></div>`;
+    }
+    h+=`<div class="section-label">Memorise word-for-word</div>`;
+    h+=`<div class="memo">`+ch.memorize.map(l=>`<div class="line">• ${l}</div>`).join('')+`</div>`;
+    (ch.cantskip||[]).forEach(c=>h+=`<div class="cantskip"><span class="tagx">Cannot skip</span>${c}</div>`);
+    h+=this.renderWhys(ch);
+    return h;
+  },
+
+  sbRecall(ch){
+    this._recallNailed=this._recallNailed||{};
+    let h=`<h3 class="chalk-h">The blackboard drill</h3>
+      <p class="prose">This is the real test. For each prompt, say your answer <b>out loud</b> as if at the board, then reveal Professor Theta's model answer and rate yourself honestly.</p>`;
+    ch.recall.forEach((r,i)=>{
+      h+=`<div class="recall" id="recall-${i}">
+        <div class="prompt">${r.prompt}</div>
+        <button class="btn btn-ghost" onclick="Game.revealRecall(${i})">Reveal model answer</button>
+        <div class="model"><p class="prose mb0">${r.model}</p>
+          <div class="rate-row">
+            <button class="rate miss" onclick="Game.rateRecall(${i},0)">✗ Missed it</button>
+            <button class="rate soso" onclick="Game.rateRecall(${i},1)">~ Shaky</button>
+            <button class="rate nail" onclick="Game.rateRecall(${i},2)">✓ Nailed it</button>
+          </div>
+        </div>
+      </div>`;
+    });
+    return h;
+  },
+  revealRecall(i){ const el=document.getElementById('recall-'+i); if(el) el.classList.add('revealed'); },
+  rateRecall(i,lvl){
+    const ch=this.chap(); const m=this.m(ch.id);
+    const key=ch.id+':'+i;
+    this._recallNailed=this._recallNailed||{};
+    if(lvl===2){ this._recallNailed[key]=true; }
+    else { delete this._recallNailed[key]; }
+    let nailed=0; ch.recall.forEach((r,k)=>{ if(this._recallNailed[ch.id+':'+k]) nailed++; });
+    m.recall=nailed; this.save();
+    this.computeMedal(ch.id);
+    const lbl=['Keep drilling — reveal it again later.','Almost. Re-read the model answer.','Locked in. 🔥'][lvl];
+    this.toast(lbl, lvl===2?'gold':(lvl===0?'coral':''));
+    const el=document.getElementById('recall-'+i);
+    if(el){ el.style.borderColor = lvl===2?'rgba(216,180,127,.7)':(lvl===0?'rgba(153,99,55,.6)':'rgba(244,227,172,.5)'); }
+  },
+
+  /* ============================================================
+     QUIZ
+     ============================================================ */
+  sbQuiz(ch){
+    this._quiz={answered:{},correct:0,total:ch.quiz.length};
+    let h=`<h3 class="chalk-h">The Trial</h3>
+      <div class="qprog" id="qprog">0 / ${ch.quiz.length} answered</div>`;
+    ch.quiz.forEach((q,qi)=>{
+      let opts='';
+      q.opts.forEach((o,oi)=>{ opts+=`<button class="opt" id="opt-${qi}-${oi}" onclick="Game.answerQuiz(${qi},${oi})">${o}</button>`; });
+      h+=`<div class="quizcard">
+        <div class="qtext">${qi+1}. ${q.q}</div>
+        ${opts}
+        <div class="qexpl" id="qexpl-${qi}">${q.expl}</div>
+      </div>`;
+    });
+    return h;
+  },
+  answerQuiz(qi,oi){
+    if(this._quiz.answered[qi]!==undefined) return;
+    const ch=this.chap(); const q=ch.quiz[qi];
+    this._quiz.answered[qi]=oi;
+    const correct=q.a;
+    for(let k=0;k<q.opts.length;k++){
+      const b=document.getElementById(`opt-${qi}-${k}`);
+      if(!b) continue;
+      if(k===correct) b.classList.add('correct');
+      else if(k===oi) b.classList.add('wrong');
+      else b.classList.add('dim');
+      b.style.pointerEvents='none';
+    }
+    document.getElementById('qexpl-'+qi).classList.add('show');
+    if(oi===correct){ this._quiz.correct++; this.award(6,'Correct answer'); }
+    else { this.toast('Not quite — read the explanation','coral'); }
+    const ans=Object.keys(this._quiz.answered).length;
+    document.getElementById('qprog').textContent=`${ans} / ${this._quiz.total} answered`;
+    if(ans===this._quiz.total){
+      const pct=Math.round(100*this._quiz.correct/this._quiz.total);
+      const m=this.m(ch.id); m.quiz=Math.max(m.quiz,pct); this.save();
+      if(pct===100) this.grant('golden_chalk');
+      this.computeMedal(ch.id);
+      this.toast(`Trial scored ${pct}%`, pct>=75?'gold':'coral');
+    }
+  },
+
+  /* ============================================================
+     RECONSTRUCT CHALLENGE (tap-to-place)
+     ============================================================ */
+  initRecon(ch){
+    const lines=ch.recon.lines.slice();
+    const order=lines.map((_,i)=>i);
+    // shuffle
+    for(let i=order.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [order[i],order[j]]=[order[j],order[i]]; }
+    this._recon={correct:lines, poolOrder:order, placed:[]};
+    this.renderRecon();
+  },
+  renderRecon(){
+    const r=this._recon; const host=document.getElementById('reconhost');
+    if(!host) return;
+    const placedSet=new Set(r.placed);
+    let pool='';
+    r.poolOrder.forEach(idx=>{
+      if(placedSet.has(idx)) return;
+      pool+=`<div class="recon-line" onclick="Game.reconTap(${idx})"><span class="grip">⋮⋮</span><code>${this.hl(r.correct[idx])}</code></div>`;
+    });
+    if(!pool) pool='<div class="muted" style="font-size:13px;padding:6px">All lines placed — press Check.</div>';
+    let slots='';
+    r.placed.forEach((idx,pos)=>{
+      slots+=`<div class="recon-line" id="slot-${pos}" onclick="Game.reconUnplace(${pos})"><span class="grip">${pos+1}.</span><code>${this.hl(r.correct[idx])}</code></div>`;
+    });
+    if(!slots) slots='<div class="muted" style="font-size:13px;padding:6px">Tap lines below in the correct order…</div>';
+    host.innerHTML=`
+      <div class="vlabel">Your reconstruction <span class="chip">${r.placed.length}/${r.correct.length}</span></div>
+      <div class="recon-slots">${slots}</div>
+      <div class="vlabel">Available lines</div>
+      <div class="recon-pool">${pool}</div>
+      <div class="vctrl">
+        <button class="btn btn-primary" onclick="Game.reconCheck()">Check order</button>
+        <button class="btn btn-ghost" onclick="Game.initRecon(Game.chap())">Reset</button>
+      </div>
+      <div id="reconmsg" style="margin-top:10px"></div>`;
+  },
+  reconTap(idx){ this._recon.placed.push(idx); this.renderRecon(); },
+  reconUnplace(pos){ this._recon.placed.splice(pos,1); this.renderRecon(); },
+  reconCheck(){
+    const r=this._recon;
+    if(r.placed.length<r.correct.length){ document.getElementById('reconmsg').innerHTML='<div class="cantskip">Place all the lines first.</div>'; return; }
+    let allOk=true;
+    r.placed.forEach((idx,pos)=>{
+      const el=document.getElementById('slot-'+pos);
+      const ok = idx===pos;
+      if(el) el.classList.add(ok?'ok':'bad');
+      if(!ok) allOk=false;
+    });
+    const msg=document.getElementById('reconmsg');
+    if(allOk){
+      msg.innerHTML='<div class="memo"><div class="line">✓ Perfect reconstruction. You can write this from memory.</div></div>';
+      if(!r.solved){ r.solved=true; this.award(15,'Rebuilt the algorithm'); }
+    } else {
+      msg.innerHTML='<div class="cantskip"><span class="tagx">Not yet</span>The red lines are out of place. Tap them to remove, then try again.</div>';
+    }
+  },
+
+  /* ============================================================
+     VISUALIZERS
+     ============================================================ */
+  initViz(ch){
+    const host=document.getElementById('vizhost'); if(!host) return;
+    const k=ch.walk.kind;
+    if(k==='inversions') this.vizInversions();
+    else if(k==='maxprofit') this.vizMaxProfit(ch.walk.data);
+    else if(k==='master') this.vizMaster();
+    else if(k==='karatsuba') this.vizKaratsuba(ch.walk.data);
+    else if(k==='strassen') this.vizStrassen();
+    else if(k==='fft') this.vizFFT();
+    else if(k==='closest') this.vizClosest();
+  },
+
+  /* ---------- inversions: the algorithm AS a mechanic ---------- */
+  vizInversions(){
+    const L=[2,4], R=[1,3,5], n1=L.length;
+    let i=0,j=0,inv=0; const merged=[]; const steps=[];
+    steps.push({i:0,j:0,inv:0,merged:[],msg:'Both halves came back SORTED. Merge them while counting split inversions.',cls:''});
+    while(i<n1 && j<R.length){
+      if(L[i]<=R[j]){ merged.push({v:L[i],from:'L'}); const used=L[i]; i++;
+        steps.push({i,j,inv,merged:merged.slice(),msg:`left ${used} ≤ right ${R[j]} → output ${used}. No new inversion.`,cls:'cool'}); }
+      else { const add=n1-i; inv+=add; const used=R[j]; merged.push({v:R[j],from:'R'}); j++;
+        steps.push({i,j,inv,add,merged:merged.slice(),msg:`right ${used} is smaller → output it. It jumps the ${add} remaining left element${add>1?'s':''} → +${add} (add n1−i+1).`,cls:'hot'}); }
+    }
+    while(i<n1){ const used=L[i]; merged.push({v:L[i],from:'L'}); i++; steps.push({i,j,inv,merged:merged.slice(),msg:`drain remaining left ${used}.`,cls:'cool'}); }
+    while(j<R.length){ const used=R[j]; merged.push({v:R[j],from:'R'}); j++; steps.push({i,j,inv,merged:merged.slice(),msg:`drain remaining right ${used}.`,cls:''}); }
+    steps.push({i,j,inv,merged:merged.slice(),done:true,msg:`Done — ${inv} split inversions across the halves (pairs: (2,1),(4,1),(4,3)).`,cls:'good'});
+    this._viz={steps,idx:0,L,R,n1};
+    this.renderInv();
+  },
+  renderInv(){
+    const v=this._viz, s=v.steps[v.idx], host=document.getElementById('vizhost');
+    if(!host) return;
+    const cells=(arr,cls,ptr)=>arr.map((x,k)=>`<div class="cell ${cls} ${k===ptr?'ptr':''} ${(cls==='L'&&k>=s.i&&s.cls==='hot'&&!s.done)?'flash':''}"><span class="idx">${k+1}</span>${x}</div>`).join('');
+    const mergedCells=s.merged.map(o=>`<div class="cell ${o.from==='R'?'R':'L'} merged">${o.v}</div>`).join('')||'<span class="muted" style="font-size:13px">—</span>';
+    let log='';
+    for(let t=1;t<=v.idx;t++){ const st=v.steps[t]; log+=`<div class="${st.cls||''}">${t}. ${st.msg}</div>`; }
+    host.innerHTML=`
+      <div class="vlabel">Left half (sorted) <span class="chip">i → pointer</span></div>
+      <div class="arr">${cells(v.L,'L',s.i<v.n1?s.i:-1)}</div>
+      <div class="vlabel">Right half (sorted) <span class="chip">j → pointer</span></div>
+      <div class="arr">${cells(v.R,'R',s.j<v.R.length?s.j:-1)}</div>
+      <div class="vlabel">Merged output</div>
+      <div class="arr">${mergedCells}</div>
+      <div class="vlabel">Split inversions so far</div>
+      <div class="invcount">${s.inv}</div>
+      <div class="vctrl">
+        <button class="btn btn-ghost" onclick="Game.vizReset()">⟲ Reset</button>
+        <button class="btn btn-primary" onclick="Game.vizStep()" ${s.done?'disabled style=opacity:.4':''}>Step ▶</button>
+        <button class="btn btn-ghost" onclick="Game.vizPlay()">⏩ Auto-play</button>
+      </div>
+      <div class="vlog">${log||'<span class="muted">Press Step to begin the merge.</span>'}</div>`;
+  },
+  vizStep(){ const v=this._viz; if(v.idx<v.steps.length-1){ v.idx++; this.renderInv(); if(v.steps[v.idx].add) this.burstAt(event,'var(--coral)'); } },
+  vizReset(){ if(this._viz.timer){clearInterval(this._viz.timer);this._viz.timer=null;} this._viz.idx=0; this.renderInv(); },
+  vizPlay(){ const v=this._viz; if(v.timer){clearInterval(v.timer);v.timer=null;return;} v.timer=setInterval(()=>{ if(v.idx<v.steps.length-1){v.idx++;this.renderInv();} else {clearInterval(v.timer);v.timer=null;} },1100); },
+
+  /* ---------- maximum profit ---------- */
+  vizMaxProfit(data){
+    const a=data||[7,1,5,3,6,4]; const m=Math.ceil(a.length/2);
+    const left=a.slice(0,m), right=a.slice(m);
+    const best=arr=>{ let mn=0,bp=0; for(let s=0;s<arr.length;s++)for(let e=s+1;e<arr.length;e++){ if(arr[e]-arr[s]>bp){bp=arr[e]-arr[s];mn=s;} } return bp; };
+    const lb=best(left), rb=best(right);
+    let lminI=0; left.forEach((x,k)=>{ if(x<left[lminI])lminI=k; });
+    let rmaxI=0; right.forEach((x,k)=>{ if(x>right[rmaxI])rmaxI=k; });
+    const cross=right[rmaxI]-left[lminI];
+    const winner = cross>=lb&&cross>=rb?'cross':(lb>=rb?'left':'right');
+    this._mp={a,m,lminI,rmaxI,lb,rb,cross,winner,reveal:false};
+    this.renderMP();
+  },
+  renderMP(){
+    const p=this._mp, host=document.getElementById('vizhost'); if(!host) return;
+    const cells=p.a.map((x,k)=>{
+      const side=k<p.m?'L':'R';
+      let extra='';
+      if(p.reveal){
+        if(k===p.lminI) extra='flash';
+        if(k===p.m+p.rmaxI) extra='flash';
+      }
+      return `<div class="cell ${side} ${extra}"><span class="idx">d${k+1}</span>${x}</div>`;
+    }).join('');
+    const card=(t,v,lit)=>`<div class="prodcard ${lit?'lit':''}"><div class="pn">${v}</div><div class="pf">${t}</div></div>`;
+    host.innerHTML=`
+      <div class="vlabel">Prices — split at the middle (blue = left half, coral = right half)</div>
+      <div class="arr">${cells}</div>
+      <div class="vlabel">Three candidate trades — the answer is the largest</div>
+      <div>
+        ${card('best fully inside LEFT',p.lb,p.winner==='left'&&p.reveal)}
+        ${card('best fully inside RIGHT',p.rb,p.winner==='right'&&p.reveal)}
+        ${card('CROSSING: buy left-min, sell right-max',p.cross,p.winner==='cross'&&p.reveal)}
+      </div>
+      <div class="vctrl">
+        <button class="btn btn-primary" onclick="Game.mpReveal()">${p.reveal?'Crossing shown ✓':'Reveal the crossing trade'}</button>
+      </div>
+      ${p.reveal?`<div class="vlog"><div class="good">Crossing buys at the LEFT-MINIMUM (${p.a[p.lminI]}) and sells at the RIGHT-MAXIMUM (${p.a[p.m+p.rmaxI]}) → profit ${p.cross}. The overall answer is the maximum of the three candidates = ${Math.max(p.lb,p.rb,p.cross)}.</div></div>`:''}`;
+  },
+  mpReveal(){ this._mp.reveal=true; this.renderMP(); this.burstAt(event,'var(--yellow)'); },
+
+  /* ---------- master theorem calculator ---------- */
+  vizMaster(){
+    const host=document.getElementById('vizhost'); if(!host) return;
+    const fopts=[
+      {label:'1 (constant)',deg:0,logf:false},
+      {label:'log n',deg:0,logf:true},
+      {label:'n',deg:1,logf:false},
+      {label:'n log n',deg:1,logf:true},
+      {label:'n^1.5',deg:1.5,logf:false},
+      {label:'n^2',deg:2,logf:false},
+      {label:'n^3',deg:3,logf:false}
+    ];
+    this._mt={fopts};
+    host.innerHTML=`
+      <div class="mt-row">
+        <div class="mt-field"><label>a (subproblems)</label><input id="mt-a" value="9"></div>
+        <div class="mt-field"><label>b (shrink factor)</label><input id="mt-b" value="3"></div>
+        <div class="mt-field"><label>f(n)</label><select id="mt-f">${fopts.map((o,i)=>`<option value="${i}" ${o.label==='n'?'selected':''}>${o.label}</option>`).join('')}</select></div>
+        <button class="btn btn-primary" onclick="Game.mtCompute()">Apply theorem</button>
+      </div>
+      <div class="vlabel">Textbook examples — tap to load</div>
+      <div class="pillbar">
+        <button class="pillbtn" onclick="Game.mtPreset(9,3,2)">9T(n/3)+n</button>
+        <button class="pillbtn" onclick="Game.mtPreset(1,1.5,0)">T(2n/3)+1</button>
+        <button class="pillbtn" onclick="Game.mtPreset(3,4,3)">3T(n/4)+n log n</button>
+        <button class="pillbtn" onclick="Game.mtPreset(2,2,3)">2T(n/2)+n log n (gap!)</button>
+      </div>
+      <div id="mt-out"></div>`;
+    this.mtCompute();
+  },
+  mtPreset(a,b,fi){ document.getElementById('mt-a').value=a; document.getElementById('mt-b').value=b; document.getElementById('mt-f').value=fi; this.mtCompute(); this.burstAt(event,'var(--blue)'); },
+  mtCompute(){
+    const a=parseFloat(document.getElementById('mt-a').value);
+    const b=parseFloat(document.getElementById('mt-b').value);
+    const f=this._mt.fopts[parseInt(document.getElementById('mt-f').value)];
+    const out=document.getElementById('mt-out');
+    if(!(a>=1)||!(b>1)){ out.innerHTML='<div class="mt-out">Need a ≥ 1 and b &gt; 1.</div>'; return; }
+    const c=Math.log(a)/Math.log(b); // watershed exponent log_b a
+    const cR=Math.round(c*1000)/1000;
+    const watershed = c===0?'n⁰ = 1':`n^${cR}`;
+    let verdict='', cas='';
+    const eps=1e-9;
+    if(f.deg < c-1e-6){ cas='CASE 1'; verdict=`f grows polynomially slower than the watershed ⇒ <b>T(n) = Θ(n^${cR})</b> (the leaves dominate).`; }
+    else if(Math.abs(f.deg-c)<=1e-6 && !f.logf){ cas='CASE 2'; verdict=`f matches the watershed exactly ⇒ <b>T(n) = Θ(n^${cR} · log n)</b> (every level costs the same, ×log n levels).`; }
+    else if(Math.abs(f.deg-c)<=1e-6 && f.logf){ cas='THE GAP'; verdict=`f is only a <b>log-factor</b> above the watershed — not polynomial — so the theorem is silent. A finer analysis gives <b>T(n) = Θ(n^${cR} · log² n)</b>.`; }
+    else { cas='CASE 3'; verdict=`f grows polynomially faster ⇒ <b>T(n) = Θ(f(n)) = Θ(${f.label})</b>, provided the regularity condition a·f(n/b) ≤ c·f(n) holds (it does for these examples).`; }
+    out.innerHTML=`<div class="mt-out">
+      <div>Watershed n^(log_b a) = n^(log<sub>${b}</sub>${a}) = <b>${watershed}</b></div>
+      <div class="case">${cas}</div>
+      <div>${verdict}</div></div>`;
+  },
+
+  /* ---------- karatsuba ---------- */
+  vizKaratsuba(data){
+    const xs=(data&&data.x)||'1101', ys=(data&&data.y)||'1011';
+    const half=xs.length/2;
+    const x1=parseInt(xs.slice(0,half),2), x0=parseInt(xs.slice(half),2);
+    const y1=parseInt(ys.slice(0,half),2), y0=parseInt(ys.slice(half),2);
+    const a=x1*y1, c=x0*y0, mid=(x1+x0)*(y1+y0), middle=mid-a-c;
+    const n=xs.length;
+    const total=a*(1<<n)+middle*(1<<half)+c;
+    this._k={xs,ys,half,x1,x0,y1,y0,a,c,mid,middle,n,total,step:0};
+    this.renderK();
+  },
+  renderK(){
+    const k=this._k, host=document.getElementById('vizhost'); if(!host)return;
+    const bits=(str,n)=>str.split('').map((b,i)=>`<div class="kbit ${i<n?'hi':'lo'}">${b}</div>`).join('');
+    const card=(name,formula,val,lit)=>`<div class="prodcard ${lit?'lit':''}"><div class="pn">${val}</div><div class="pf">${name}</div><div class="pf">${formula}</div></div>`;
+    host.innerHTML=`
+      <div class="vlabel">x = ${k.xs}₂ = ${parseInt(k.xs,2)} — split into high / low halves</div>
+      <div class="kbits">${bits(k.xs,k.half)}</div>
+      <div class="vlabel">y = ${k.ys}₂ = ${parseInt(k.ys,2)} — split into high / low halves</div>
+      <div class="kbits">${bits(k.ys,k.half)}</div>
+      <div class="vlabel">x₁=${k.x1}, x₀=${k.x0}, y₁=${k.y1}, y₀=${k.y0} — only THREE products needed</div>
+      <div>
+        ${card('x₁·y₁  (high)','= '+k.x1+'·'+k.y1,k.a,k.step>=1)}
+        ${card('x₀·y₀  (low)','= '+k.x0+'·'+k.y0,k.c,k.step>=2)}
+        ${card('(x₁+x₀)(y₁+y₀)','= '+(k.x1+k.x0)+'·'+(k.y1+k.y0),k.mid,k.step>=3)}
+      </div>
+      ${k.step>=4?`<div class="fx"><div class="math">middle = (x₁+x₀)(y₁+y₀) − x₁y₁ − x₀y₀ = ${k.mid} − ${k.a} − ${k.c} = ${k.middle}</div><div class="words">The middle term x₁y₀+x₀y₁ is recovered by subtraction — that's how three products replace four.</div></div>`:''}
+      ${k.step>=5?`<div class="memo"><div class="line">xy = x₁y₁·2ⁿ + middle·2^(n/2) + x₀y₀ = ${k.a}·${1<<k.n} + ${k.middle}·${1<<k.half} + ${k.c} = <b>${k.total}</b> &nbsp;(check: ${parseInt(k.xs,2)}×${parseInt(k.ys,2)} = ${k.total} ✓)</div></div>`:''}
+      <div class="vctrl">
+        <button class="btn btn-ghost" onclick="Game._k.step=0;Game.renderK()">⟲ Reset</button>
+        <button class="btn btn-primary" onclick="Game.kStep()" ${k.step>=5?'disabled style=opacity:.4':''}>Reveal next ▶</button>
+      </div>`;
+  },
+  kStep(){ if(this._k.step<5){ this._k.step++; this.renderK(); this.burstAt(event,'var(--yellow)'); } },
+
+  /* ---------- strassen ---------- */
+  vizStrassen(){
+    const A=[1,2,3,4], B=[5,6,7,8]; // A11,A12,A21,A22 ; B11..
+    const [A11,A12,A21,A22]=A, [B11,B12,B21,B22]=B;
+    const P=[
+      {n:'P₁',f:'A₁₁(B₁₂−B₂₂)',v:A11*(B12-B22)},
+      {n:'P₂',f:'(A₁₁+A₁₂)B₂₂',v:(A11+A12)*B22},
+      {n:'P₃',f:'(A₂₁+A₂₂)B₁₁',v:(A21+A22)*B11},
+      {n:'P₄',f:'A₂₂(B₂₁−B₁₁)',v:A22*(B21-B11)},
+      {n:'P₅',f:'(A₁₁+A₂₂)(B₁₁+B₂₂)',v:(A11+A22)*(B11+B22)},
+      {n:'P₆',f:'(A₁₂−A₂₂)(B₂₁+B₂₂)',v:(A12-A22)*(B21+B22)},
+      {n:'P₇',f:'(A₁₁−A₂₁)(B₁₁+B₁₂)',v:(A11-A21)*(B11+B12)}
+    ];
+    const p=P.map(x=>x.v);
+    const C=[p[4]+p[3]-p[1]+p[5], p[0]+p[1], p[2]+p[3], p[4]+p[0]-p[2]-p[6]];
+    this._s={A,B,P,C,step:0};
+    this.renderS();
+  },
+  renderS(){
+    const s=this._s, host=document.getElementById('vizhost'); if(!host)return;
+    const mat=(m,lbls)=>`<div class="matbox">${m.map((x,i)=>`<div class="matcell">${x}</div>`).join('')}</div>`;
+    const cards=s.P.map((x,i)=>`<div class="prodcard ${s.step>i?'lit':''}"><div class="pn">${s.step>i?x.v:'?'}</div><div class="pf">${x.n} = ${x.f}</div></div>`).join('');
+    host.innerHTML=`
+      <div class="vlabel">A and B as 2×2 blocks (here scalar entries for clarity)</div>
+      <div>A = ${mat(s.A)} &nbsp; B = ${mat(s.B)}</div>
+      <div class="vlabel">Strassen's SEVEN products (the standard method needs eight)</div>
+      <div>${cards}</div>
+      ${s.step>=7?`<div class="vlabel">Recombine into C (only additions/subtractions)</div>
+        <div class="fx"><div class="math">C₁₁=P₅+P₄−P₂+P₆=${s.C[0]} &nbsp; C₁₂=P₁+P₂=${s.C[1]}\nC₂₁=P₃+P₄=${s.C[2]} &nbsp; C₂₂=P₅+P₁−P₃−P₇=${s.C[3]}</div><div class="words">Seven multiplications drive the whole product; the rest is cheap addition. That single saved multiply changes the exponent from 3 to log₂7 ≈ 2.81.</div></div>
+        <div>C = ${mat(s.C)} <span class="muted">(check: [[19,22],[43,50]] ✓)</span></div>`:''}
+      <div class="vctrl">
+        <button class="btn btn-ghost" onclick="Game._s.step=0;Game.renderS()">⟲ Reset</button>
+        <button class="btn btn-primary" onclick="Game.sStep()" ${s.step>=7?'disabled style=opacity:.4':''}>Reveal next product ▶</button>
+      </div>`;
+  },
+  sStep(){ if(this._s.step<7){ this._s.step++; this.renderS(); this.burstAt(event,'var(--mint)'); } },
+
+  /* ---------- FFT (conceptual phases) ---------- */
+  vizFFT(){
+    this._f={phase:0};
+    this.renderF();
+  },
+  renderF(){
+    const f=this._f, host=document.getElementById('vizhost'); if(!host)return;
+    const phases=[
+      {t:'1 · Evaluate',d:'Evaluate A(x) and B(x) at the 2n complex roots of unity. Using A(x)=A_even(x²)+x·A_odd(x²), each evaluation splits into two half-size ones — the divide-and-conquer that makes it O(n log n) instead of O(n²).'},
+      {t:'2 · Multiply',d:'At each root, C(ωⱼ)=A(ωⱼ)·B(ωⱼ). This is just 2n ordinary number multiplications — O(n) total. In "value form" polynomial multiplication is trivial.'},
+      {t:'3 · Interpolate',d:'Recover the coefficients of C from its values. The same FFT machinery runs "in reverse" (because Σ ωˢ = 0 for any root ω≠1), again in O(n log n). Out come the product coefficients.'}
+    ];
+    host.innerHTML=`
+      <div class="fx"><div class="math">A(x) = A_even(x²) + x · A_odd(x²)</div><div class="words">Split a polynomial by even-indexed and odd-indexed coefficients. Each half has half the degree, so evaluating recurses as T(n)=2T(n/2)+O(n) = O(n log n).</div></div>
+      <div class="pillbar">
+        ${phases.map((p,i)=>`<button class="pillbtn ${f.phase===i?'active':''}" onclick="Game._f.phase=${i};Game.renderF()">${p.t}</button>`).join('')}
+      </div>
+      <div class="mt-out"><div class="case" style="font-size:20px">${phases[f.phase].t}</div><div>${phases[f.phase].d}</div></div>
+      <div class="vlabel">The split tree (coefficients → halves)</div>
+      <div class="arr">
+        <div class="cell L">a₀</div><div class="cell R">a₁</div><div class="cell L">a₂</div><div class="cell R">a₃</div>
+        <div class="cell L">a₄</div><div class="cell R">a₅</div><div class="cell L">a₆</div><div class="cell R">a₇</div>
+      </div>
+      <div class="muted" style="font-size:13px;margin-top:6px">Blue = even indices → A_even &nbsp;·&nbsp; coral = odd indices → A_odd</div>`;
+  },
+
+  /* ---------- closest pair (canvas) ---------- */
+  vizClosest(){
+    this._cp={step:0,
+      pts:[[40,60],[95,150],[120,40],[160,210],[210,90],[250,170],[300,55],[330,140],[360,200],[400,100]],
+      line:230};
+    this.renderCP();
+  },
+  renderCP(){
+    const cp=this._cp, host=document.getElementById('vizhost'); if(!host)return;
+    const steps=[
+      'All n points in the plane. Brute force compares every pair — O(n²). We want O(n log n).',
+      'Drop a vertical line ℓ that splits the points into a left half and a right half of equal size.',
+      'Recurse on each side. Let δ_L, δ_R be the closest distances found, and δ = min(δ_L, δ_R).',
+      'A closer pair could still straddle ℓ. Only points within distance δ of ℓ can matter — that is the δ-strip.',
+      'Key fact: inside the strip, each point need only be checked against the next 7 points by y-order. A δ×2δ box splits into 8 squares of side δ/2; each holds ≤1 point because the diagonal δ/√2 < δ.'
+    ];
+    host.innerHTML=`
+      <div class="cpwrap"><canvas id="cpcanvas" width="440" height="260"></canvas></div>
+      <div class="vctrl">
+        <button class="btn btn-ghost" onclick="Game._cp.step=0;Game.renderCP()">⟲ Reset</button>
+        <button class="btn btn-primary" onclick="Game.cpStep()" ${cp.step>=4?'disabled style=opacity:.4':''}>Next ▶</button>
+      </div>
+      <div class="vlog"><div class="${cp.step===4?'good':'cool'}">${cp.step+1}. ${steps[cp.step]}</div></div>`;
+    this.drawCP();
+  },
+  cpStep(){ if(this._cp.step<4){ this._cp.step++; this.renderCP(); this.burstAt(event,'var(--blue)'); } },
+  drawCP(){
+    const cp=this._cp; const cv=document.getElementById('cpcanvas'); if(!cv) return;
+    const x=cv.getContext('2d'); const W=cv.width,H=cv.height;
+    x.clearRect(0,0,W,H);
+    const L=cp.line;
+    // dividing line
+    if(cp.step>=1){ x.strokeStyle='#F4E3AC'; x.lineWidth=2; x.setLineDash([6,5]); x.beginPath(); x.moveTo(L,0); x.lineTo(L,H); x.stroke(); x.setLineDash([]);
+      x.fillStyle='#F4E3AC'; x.font='14px monospace'; x.fillText('ℓ',L+5,16); }
+    // delta strip
+    const delta=46;
+    if(cp.step>=3){ x.fillStyle='rgba(83,86,93,.12)'; x.fillRect(L-delta,0,delta*2,H);
+      x.strokeStyle='rgba(83,86,93,.5)'; x.lineWidth=1; x.strokeRect(L-delta,0,delta*2,H);
+      x.fillStyle='#53565D'; x.font='12px monospace'; x.fillText('δ',L-delta/2-3,H-8); x.fillText('δ',L+delta/2-3,H-8); }
+    // the box + 8 squares
+    if(cp.step>=4){
+      const by=150, bh=delta*2, h2=delta;
+      x.strokeStyle='rgba(153,99,55,.9)'; x.lineWidth=2; x.strokeRect(L-delta,by,delta*2,bh);
+      x.strokeStyle='rgba(153,99,55,.4)'; x.lineWidth=1;
+      for(let c=1;c<4;c++){ x.beginPath(); x.moveTo(L-delta+c*(delta*2/4)*1,by); } // grid below
+      // vertical grid (4 cols)
+      for(let c=1;c<4;c++){ const gx=L-delta+c*(bh/4); x.beginPath(); x.moveTo(gx,by); x.lineTo(gx,by+bh); x.stroke(); }
+      // horizontal grid (2 rows)
+      x.beginPath(); x.moveTo(L-delta,by+h2); x.lineTo(L+delta,by+h2); x.stroke();
+      x.fillStyle='#996337'; x.font='11px monospace'; x.fillText('δ×2δ → 8 squares of side δ/2',L-delta,by-6);
+    }
+    // points
+    cp.pts.forEach(p=>{
+      const side = p[0]<L;
+      x.fillStyle = cp.step>=2 ? (side?'#53565D':'#996337') : '#FAF5E3';
+      x.beginPath(); x.arc(p[0],p[1],5,0,7); x.fill();
+    });
+  },
+
+  /* ============================================================
+     EXAM BOSS
+     ============================================================ */
+  renderExamIntro(){
+    return `<div class="view"><div class="board"><div class="board-inner exam-stage">
+      <div class="examiner">🎓</div>
+      <h2 class="chalk-h" style="font-size:36px">The Oral Exam</h2>
+      <p class="prose" style="max-width:620px;margin:10px auto">The Examiner will choose <b>one algorithm at random</b> — exactly like the real thing. You'll be asked to state the problem, give the algorithm, justify it, and analyse its running time. Answer each in your head (or out loud), reveal the model, and rate yourself. Land enough strong answers to earn the <b>Examiner's Seal</b>.</p>
+      <div class="cta-row" style="justify-content:center">
+        <button class="btn btn-primary" onclick="Game.startExam()">⚔️ Face the Examiner</button>
+        <button class="btn btn-ghost" onclick="Game.go('home')">↩ Not yet</button>
+      </div>
+      ${this.state.coll['examiner']?'<p class="muted" style="margin-top:14px">You already hold the Examiner\'s Seal — return any time to sharpen up.</p>':''}
+    </div></div></div>`;
+  },
+  startExam(){
+    const ch=CHAPTERS[Math.floor(Math.random()*CHAPTERS.length)];
+    this._exam={ch, qs:ch.recall.slice(), idx:0, hp:ch.recall.length, max:ch.recall.length, score:0};
+    this.renderExamQ();
+  },
+  renderExamQ(){
+    const e=this._exam, q=e.qs[e.idx];
+    const hpPct=100*e.hp/e.max;
+    document.getElementById('app').innerHTML=`<div class="view"><div class="board"><div class="board-inner exam-stage">
+      <div class="examiner" id="examiner">🎓</div>
+      <div class="muted">Topic drawn at random: <b style="color:var(--violet)">${e.ch.title}</b> · Question ${e.idx+1} of ${e.qs.length}</div>
+      <div class="hpbar"><i style="width:${hpPct}%"></i></div>
+      <div class="exam-q">${e.idx===0?'“State the problem and write it on the board.”':'“'+q.prompt+'”'}</div>
+      <div id="exam-model" class="recall" style="max-width:640px;margin:18px auto;text-align:left">
+        <button class="btn btn-ghost" onclick="Game.examReveal()">Reveal model answer</button>
+        <div class="model"><p class="prose mb0">${q.model}</p>
+          <div class="rate-row">
+            <button class="rate miss" onclick="Game.examRate(0)">✗ Missed</button>
+            <button class="rate soso" onclick="Game.examRate(1)">~ Partial</button>
+            <button class="rate nail" onclick="Game.examRate(2)">✓ Strong</button>
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-ghost" onclick="Game.go('home')">Abandon exam</button>
+    </div></div></div>`;
+  },
+  examReveal(){ const el=document.getElementById('exam-model'); if(el) el.classList.add('revealed'); },
+  examRate(lvl){
+    const e=this._exam;
+    e.score += lvl; // 0,1,2
+    if(lvl<2){ const ex=document.getElementById('examiner'); if(ex){ ex.classList.add('angry'); setTimeout(()=>ex.classList.remove('angry'),500);} }
+    e.hp -= lvl===2?1:(lvl===1?0.5:0);
+    e.idx++;
+    if(e.idx>=e.qs.length){ this.examEnd(); return; }
+    this.renderExamQ();
+  },
+  examEnd(){
+    const e=this._exam;
+    const maxScore=e.qs.length*2;
+    const pct=Math.round(100*e.score/maxScore);
+    const passed=pct>=60;
+    if(passed){ this.state.examWins=(this.state.examWins||0)+1; this.grant('examiner'); this.award(50,'Survived the Examiner'); }
+    document.getElementById('app').innerHTML=`<div class="view"><div class="board"><div class="board-inner exam-stage">
+      <div class="examiner">${passed?'🎓':'😠'}</div>
+      <h2 class="chalk-h" style="font-size:34px">${passed?'You passed the trial':'Not this time'}</h2>
+      <p class="prose" style="max-width:560px;margin:10px auto">Topic: <b>${e.ch.title}</b> · You scored <b style="color:${passed?'var(--mint)':'var(--coral)'}">${pct}%</b>. ${passed?'The Examiner gives a curt nod and signs your seal.':'Review the topic and the blackboard drill, then face the Examiner again.'}</p>
+      <div class="cta-row" style="justify-content:center">
+        <button class="btn btn-primary" onclick="Game.startExam()">Draw another random topic</button>
+        <button class="btn btn-ghost" onclick="Game.go('lesson','${e.ch.id}')">Study ${e.ch.title}</button>
+        <button class="btn btn-ghost" onclick="Game.go('home')">↩ Map</button>
+      </div>
+    </div></div></div>`;
+    if(passed) this.burst(window.innerWidth/2,180,'var(--yellow)');
+  },
+
+  /* ============================================================
+     REVIEW DECK
+     ============================================================ */
+  renderReviewIntro(){
+    const cards=[];
+    CHAPTERS.forEach(c=>c.memorize.forEach(line=>cards.push({title:c.title,rune:c.rune,line})));
+    this._rev={cards,idx:0,flipped:false};
+    return `<div class="view"><div class="board"><div class="board-inner exam-stage">
+      <div style="font-size:54px">🔁</div>
+      <h2 class="chalk-h" style="font-size:34px">Quick Review Deck</h2>
+      <p class="prose" style="max-width:560px;margin:10px auto">${cards.length} flashcards covering every must-memorise line across all seven algorithms. Try to recall each before flipping. Perfect for the night before.</p>
+      <div class="cta-row" style="justify-content:center">
+        <button class="btn btn-primary" onclick="Game.startReview()">Start the deck</button>
+        <button class="btn btn-ghost" onclick="Game.go('home')">↩ Map</button>
+      </div>
+    </div></div></div>`;
+  },
+  startReview(){ this._rev.idx=0; this._rev.flipped=false; this.renderRev(); },
+  renderRev(){
+    const r=this._rev, c=r.cards[r.idx];
+    document.getElementById('app').innerHTML=`<div class="view"><div class="board"><div class="board-inner exam-stage">
+      <div class="muted">Card ${r.idx+1} / ${r.cards.length}</div>
+      <div style="font-size:40px;margin:6px">${c.rune}</div>
+      <div class="exam-q" style="font-size:24px">${c.title}</div>
+      <div class="recall ${r.flipped?'revealed':''}" style="max-width:620px;margin:16px auto;text-align:left">
+        <div class="prompt" style="font-size:20px">${r.flipped?'Key fact':'What must you remember here?'}</div>
+        ${r.flipped?`<div class="model" style="display:block"><p class="prose mb0">${c.line}</p></div>`:''}
+      </div>
+      <div class="cta-row" style="justify-content:center">
+        ${r.flipped
+          ? `<button class="btn btn-ghost" onclick="Game.revPrev()">← Prev</button><button class="btn btn-primary" onclick="Game.revNext()">Next card →</button>`
+          : `<button class="btn btn-primary" onclick="Game.revFlip()">Flip ⤺</button>`}
+        <button class="btn btn-ghost" onclick="Game.go('home')">Done</button>
+      </div>
+    </div></div></div>`;
+  },
+  revFlip(){ this._rev.flipped=true; this.renderRev(); },
+  revNext(){ const r=this._rev; r.idx=(r.idx+1)%r.cards.length; r.flipped=false; this.renderRev(); if(r.idx===0){ this.award(10,'Reviewed every card'); } },
+  revPrev(){ const r=this._rev; r.idx=(r.idx-1+r.cards.length)%r.cards.length; r.flipped=false; this.renderRev(); },
+
+  /* ---------- player name (optional flourish) ---------- */
+  setPlayerName(){
+    const n=window.prompt('What shall the Examiner call you, scholar?', this.state.player||'Scholar');
+    if(n&&n.trim()){ this.state.player=n.trim().slice(0,24); this.save(); this.go('home'); }
+  }
+
+});
+
+/* ---------- BOOT ---------- */
+Game.init();
+
+</script>
+
+</body>
+</html>
