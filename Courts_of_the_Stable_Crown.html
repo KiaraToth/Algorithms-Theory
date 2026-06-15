@@ -1,0 +1,1390 @@
+<!doctype html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Courts of the Stable Crown — A Fae Study Quest for Stable Matching</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700;900&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,500&family=JetBrains+Mono:wght@400;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cookie&family=Petit+Formal+Script&family=Quintessential&display=swap');
+
+:root{
+  --ink:#1b1216;
+  --night:#191017;
+  --night-2:#221620;
+  --plum:#2a1b22;
+  --chocolate-plum:#6E4A4F;
+  --clay-soil:#80473C;
+  --terracotta:#995647;
+  --cinnamon:#BA6D51;
+  --dusty-rose:#B77C7B;
+  --rosy-taupe:#CA9883;
+  --tan:#D7B18F;
+  --desert-sand:#E8C9AF;
+  --sand-2:#f1ddc4;
+  --sunlit:#F6BA6E;
+  --sandy:#FAB171;
+  --gold:#F6BA6E;
+  --gold-deep:#DB8E56;
+  --slate:#5A6672;
+  --slate-2:#6F707B;
+  --seelie:#F6BA6E;      /* boys court — sunlit */
+  --unseelie:#9fb0c4;    /* girls court — moonlit slate */
+  --good:#9ec98a;
+  --bad:#e08a72;
+  --chalk:#eaf3ec;
+  --board:#243029;
+  --font-display:'Cinzel', 'Georgia', serif;
+  --font-body:'Cormorant Garamond','Georgia',serif;
+  --font-mono:'JetBrains Mono', ui-monospace, 'Courier New', monospace;
+  --font-fancy: 'Quintessential', monospace;
+  --r:14px;
+
+  /* ---- semantic theme tokens (Unseelie / dark default) ---- */
+  --page-1:#160e14;
+  --page-2:#1d121b;
+  --page-3:#191017;
+  --glow-a:rgba(246,186,110,.10);
+  --glow-b:rgba(90,102,114,.16);
+  --speck-a:rgba(246,186,110,.5);
+  --speck-b:rgba(246,186,110,.35);
+  --speck-c:rgba(231,201,175,.4);
+  --speck-d:rgba(159,176,196,.4);
+  --speck-e:rgba(246,186,110,.4);
+  --speck-f:rgba(246,186,110,.3);
+  --text:var(--desert-sand);
+  --text-strong:var(--sand-2);
+  --text-soft:var(--tan);
+  --text-mute:var(--rosy-taupe);
+  --hairline:rgba(246,186,110,.25);
+  --hairline-soft:rgba(246,186,110,.2);
+  --surface:rgba(255,255,255,.03);
+  --surface-2:rgba(255,255,255,.05);
+  --surface-strong:rgba(255,255,255,.08);
+  --shadow-soft:rgba(0,0,0,.4);
+  --shadow-strong:rgba(0,0,0,.5);
+  --on-accent:#2a1b10;
+  --hud-bg-1:rgba(28,18,24,.96);
+  --hud-bg-2:rgba(28,18,24,.82);
+  --node-bg-1:rgba(42,27,34,.9);
+  --node-bg-2:rgba(25,16,23,.92);
+  --quiz-bg-1:rgba(42,27,34,.85);
+  --quiz-bg-2:rgba(25,16,23,.9);
+  --gs-bg-1:rgba(34,22,30,.92);
+  --gs-bg-2:rgba(22,14,20,.95);
+  --modal-overlay:rgba(10,6,9,.78);
+  --modal-bg-1:#241620;
+  --modal-bg-2:#180f16;
+  --toast-bg-1:#3a2530;
+  --toast-bg-2:#22141d;
+  --card-bg-1:#33212b;
+  --card-bg-2:#1d121a;
+  --input-bg:rgba(0,0,0,.3);
+  --input-text:#fff;
+  --code-bg:rgba(0,0,0,.25);
+  --tier-grasp:var(--unseelie);
+}
+
+/* ---- Seelie / light theme override ---- */
+html[data-theme="light"]{
+  --page-1:#fff3e3;
+  --page-2:#ffe7d1;
+  --page-3:#fdf6ec;
+  --glow-a:rgba(219,142,86,.16);
+  --glow-b:rgba(183,124,123,.14);
+  --speck-a:rgba(219,142,86,.55);
+  --speck-b:rgba(219,142,86,.4);
+  --speck-c:rgba(186,109,81,.35);
+  --speck-d:rgba(90,102,114,.35);
+  --speck-e:rgba(219,142,86,.45);
+  --speck-f:rgba(186,109,81,.3);
+  --text:#5a3a2e;
+  --text-strong:#3c241c;
+  --text-soft:#7a4f3c;
+  --text-mute:#9d6256;
+  --gold:#DB8E56;
+  --gold-deep:#BA6D51;
+  --sunlit:#DB8E56;
+  --sand-2:#3c241c;
+  --desert-sand:#5a3a2e;
+  --tan:#7a4f3c;
+  --rosy-taupe:#9d6256;
+  --hairline:rgba(186,109,81,.3);
+  --hairline-soft:rgba(186,109,81,.25);
+  --surface:rgba(255,255,255,.55);
+  --surface-2:rgba(255,255,255,.7);
+  --surface-strong:rgba(255,255,255,.85);
+  --shadow-soft:rgba(110,74,79,.18);
+  --shadow-strong:rgba(110,74,79,.25);
+  --on-accent:#3c241c;
+  --hud-bg-1:rgba(255,247,238,.96);
+  --hud-bg-2:rgba(255,239,222,.85);
+  --node-bg-1:rgba(255,255,255,.8);
+  --node-bg-2:rgba(255,238,222,.75);
+  --quiz-bg-1:rgba(255,255,255,.78);
+  --quiz-bg-2:rgba(255,238,222,.7);
+  --gs-bg-1:rgba(255,255,255,.82);
+  --gs-bg-2:rgba(255,238,222,.72);
+  --modal-overlay:rgba(110,74,79,.35);
+  --modal-bg-1:#fff9f1;
+  --modal-bg-2:#ffecd9;
+  --toast-bg-1:#fff3e3;
+  --toast-bg-2:#ffe2c7;
+  --card-bg-1:#ffffff;
+  --card-bg-2:#ffecdc;
+  --input-bg:rgba(255,255,255,.7);
+  --input-text:#3c241c;
+  --code-bg:rgba(186,109,81,.12);
+  --slate-2:#9d8479;
+  --good:#5f9a4a;
+  --bad:#b5573c;
+  --tier-grasp:#5A6672;
+  --chalk:#eaf3ec;
+}
+
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:var(--font-body);
+  color:var(--text);
+  background:
+    radial-gradient(1200px 700px at 80% -10%, var(--glow-a), transparent 60%),
+    radial-gradient(900px 600px at 0% 100%, var(--glow-b), transparent 55%),
+    linear-gradient(160deg, var(--page-1) 0%, var(--page-2) 45%, var(--page-3) 100%);
+  min-height:100vh;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+  transition:background-color .3s, color .3s;
+}
+body::before{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:
+    radial-gradient(1.5px 1.5px at 20% 30%, var(--speck-a), transparent),
+    radial-gradient(1.5px 1.5px at 70% 20%, var(--speck-b), transparent),
+    radial-gradient(1.2px 1.2px at 40% 70%, var(--speck-c), transparent),
+    radial-gradient(1.4px 1.4px at 85% 60%, var(--speck-d), transparent),
+    radial-gradient(1px 1px at 60% 85%, var(--speck-e), transparent),
+    radial-gradient(1.2px 1.2px at 12% 80%, var(--speck-f), transparent);
+  animation:drift 22s ease-in-out infinite alternate;
+}
+@keyframes drift{from{transform:translateY(0)}to{transform:translateY(-14px)}}
+
+::selection{background:var(--gold);color:var(--on-accent)}
+a{color:var(--sunlit)}
+h1,h2,h3,h4{font-family:var(--font-display);font-weight:700;line-height:1.15;letter-spacing:.5px}
+
+/* ---------- HUD ---------- */
+#hud{
+  position:sticky;top:0;z-index:40;
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  padding:10px 18px;
+  background:linear-gradient(180deg, var(--hud-bg-1), var(--hud-bg-2));
+  border-bottom:1px solid var(--hairline);
+  backdrop-filter:blur(8px);
+}
+#hud .crest{font-family:var(--font-display);font-weight:900;font-size:1.05rem;color:var(--gold);
+  letter-spacing:1px;display:flex;align-items:center;gap:8px;text-shadow:0 0 18px var(--glow-a)}
+.hud-stat{display:flex;flex-direction:column;line-height:1;gap:3px}
+.hud-stat .lab{font-size:.62rem;letter-spacing:2px;text-transform:uppercase;color:var(--text-mute);font-family:var(--font-mono)}
+.hud-stat .val{font-family:var(--font-display);font-size:1.05rem;color:var(--text)}
+.xpwrap{min-width:150px;flex:1 1 150px;max-width:260px}
+.xpbar{height:9px;border-radius:9px;background:var(--surface-strong);overflow:hidden;border:1px solid var(--hairline)}
+.xpbar>span{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold-deep),var(--sunlit));
+  box-shadow:0 0 12px rgba(246,186,110,.6);transition:width .6s cubic-bezier(.2,.8,.2,1)}
+.hud-actions{display:flex;gap:8px;margin-left:auto;flex-wrap:wrap}
+.btn{
+  font-family:var(--font-display);font-weight:600;letter-spacing:.5px;cursor:pointer;
+  border:1px solid var(--hairline);background:rgba(246,186,110,.08);color:var(--text);
+  padding:8px 14px;border-radius:10px;font-size:.82rem;transition:.18s;
+}
+.btn:hover{background:rgba(246,186,110,.2);border-color:var(--gold);transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn.primary{background:linear-gradient(180deg,var(--sunlit),var(--gold-deep));color:var(--on-accent);border-color:var(--sunlit);
+  box-shadow:0 6px 20px rgba(219,142,86,.35)}
+.btn.primary:hover{filter:brightness(1.06)}
+.btn.ghost{background:transparent}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none}
+.btn:focus-visible{outline:2px solid var(--sunlit);outline-offset:2px}
+.theme-toggle{display:flex;align-items:center;gap:6px;border:1px solid var(--hairline);background:rgba(246,186,110,.08);
+  border-radius:20px;padding:4px;cursor:pointer}
+.theme-toggle .seg{padding:6px 11px;border-radius:16px;font-family:var(--font-mono);font-size:.7rem;letter-spacing:1px;
+  text-transform:uppercase;color:var(--text-mute);transition:.18s}
+.theme-toggle .seg.active{background:linear-gradient(180deg,var(--sunlit),var(--gold-deep));color:var(--on-accent);font-weight:700}
+
+main{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:22px 18px 90px}
+.view{display:none;animation:rise .5s ease both}
+.view.active{display:block}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+/* ---------- MAP ---------- */
+.map-hero{text-align:center;padding:26px 10px 12px}
+.map-hero .eyebrow{font-family:var(--font-mono);letter-spacing:5px;text-transform:uppercase;font-size:.68rem;color:var(--text-mute)}
+.map-hero h1{font-size:clamp(1.9rem,5vw,3.4rem);margin:.25em 0 .1em;color:var(--text-strong);
+  text-shadow:0 0 30px var(--glow-a)}
+.map-hero h1 .sub{display:block;font-size:.42em;letter-spacing:3px;color:var(--gold);font-weight:500;margin-top:.4em}
+.map-hero p{max-width:660px;margin:.6em auto 0;font-size:1.12rem;color:var(--text-soft)}
+.map-legend{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:18px 0 6px;font-size:.82rem;color:var(--text-mute)}
+.map-legend span{display:inline-flex;align-items:center;gap:6px;font-family:var(--font-mono);letter-spacing:1px}
+.dot{width:10px;height:10px;border-radius:50%}
+
+.courts{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px;margin-top:22px}
+.court-node{
+  position:relative;text-align:left;cursor:pointer;
+  border:1px solid var(--hairline);border-radius:var(--r);
+  background:linear-gradient(160deg, var(--node-bg-1), var(--node-bg-2));
+  padding:18px 18px 16px;transition:.2s;overflow:hidden;
+}
+.court-node:hover{transform:translateY(-3px);border-color:var(--gold);box-shadow:0 10px 30px var(--shadow-soft)}
+.court-node:focus-visible{outline:2px solid var(--sunlit);outline-offset:2px}
+.court-node .num{font-family:var(--font-mono);font-size:.7rem;letter-spacing:2px;color:var(--gold-deep)}
+.court-node h3{font-size:1.18rem;margin:.25em 0 .1em;color:var(--text-strong)}
+.court-node .fae{color:var(--dusty-rose);font-size:.9rem; font-family:var(--font-fancy); padding: 8px; letter-spacing:0.8px;}
+.court-node .tag{display:inline-block;margin-top:10px;font-size:.66rem;font-family:var(--font-mono);
+  letter-spacing:1px;text-transform:uppercase;padding:3px 9px;border-radius:20px;border:1px solid}
+.court-node .mastery{position:absolute;top:14px;right:14px;font-size:.95rem;letter-spacing:1px}
+.court-node.locked{opacity:.5;filter:grayscale(.4)}
+.court-node.locked:hover{transform:none;border-color:var(--hairline);box-shadow:none}
+.court-node.locked .lockicon{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:2rem;color:rgba(120,100,90,.35)}
+.court-node.seelie{border-left:4px solid var(--seelie)}
+.court-node.unseelie{border-left:4px solid var(--unseelie)}
+.court-node.origin{border-left:4px solid var(--cinnamon)}
+.court-node.done{box-shadow:inset 0 0 0 1px rgba(158,201,138,.35)}
+.tag.todo{color:var(--gold);border-color:rgba(246,186,110,.5)}
+.tag.done{color:var(--good);border-color:rgba(158,201,138,.5)}
+
+/* ---------- COURT VIEW ---------- */
+.court-head{display:flex;align-items:flex-start;gap:16px;flex-wrap:wrap;margin-bottom:6px}
+.court-head .back{flex:0 0 auto}
+.court-title h2{font-size:clamp(1.5rem,4vw,2.3rem);color:var(--text-strong);margin:.1em 0}
+.court-title .fae{font-style:italic;color:var(--dusty-rose);font-size:1.1rem}
+.story{border-left:3px solid var(--cinnamon);background:rgba(186,109,81,.08);padding:12px 16px;border-radius:0 12px 12px 0;
+  font-style:italic;color:var(--text-soft);font-size:1.08rem;margin:14px 0}
+
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin:20px 0 14px;border-bottom:1px solid var(--hairline-soft);padding-bottom:8px}
+.tab{font-family:var(--font-display);cursor:pointer;border:none;background:transparent;color:var(--text-mute);
+  padding:7px 13px;border-radius:9px;font-size:.92rem;letter-spacing:.5px;transition:.15s}
+.tab:hover{color:var(--text);background:rgba(246,186,110,.08)}
+.tab.active{color:var(--on-accent);background:linear-gradient(180deg,var(--sunlit),var(--gold-deep))}
+.tab:focus-visible{outline:2px solid var(--sunlit);outline-offset:2px}
+.panel{display:none}
+.panel.active{display:block;animation:rise .35s ease both}
+
+/* ---------- SCROLL (parchment) ---------- */
+.scroll{
+  background:linear-gradient(180deg,#f3e3cb,#e8d2b2);
+  color:#2c2018;border-radius:14px;padding:26px 30px;line-height:1.6;font-size:1.12rem;
+  box-shadow:0 18px 50px rgba(0,0,0,.45), inset 0 0 60px rgba(140,92,71,.12);
+  border:1px solid #caa477;position:relative;
+}
+.scroll h3{font-family:var(--font-display);color:#5a2f2a;font-size:1.4rem;margin:1.1em 0 .35em;
+  border-bottom:2px solid rgba(140,71,60,.25);padding-bottom:.2em}
+.scroll h3:first-child{margin-top:0}
+.scroll h4{font-family:var(--font-display);color:#7a3f2f;font-size:1.12rem;margin:1em 0 .3em}
+.scroll p{margin:.55em 0}
+.scroll ul{margin:.4em 0 .6em;padding-left:1.2em}
+.scroll li{margin:.3em 0}
+.scroll b,.scroll strong{color:#6e2f24}
+
+/* runes = must-memorize verbatim */
+.rune{background:linear-gradient(180deg,#ffe9b8,#ffd98a);color:#5a3210;padding:.04em .28em;border-radius:5px;
+  box-shadow:0 0 0 1px rgba(180,120,40,.4), 0 1px 0 rgba(255,255,255,.5) inset;font-weight:600}
+.skipnot{text-decoration:underline wavy rgba(153,86,71,.7);text-underline-offset:3px}
+
+.callout{border-radius:12px;padding:12px 16px;margin:14px 0;border:1px solid;position:relative}
+.callout .lab{font-family:var(--font-mono);font-size:.66rem;letter-spacing:2px;text-transform:uppercase;
+  display:inline-block;padding:2px 8px;border-radius:20px;margin-bottom:6px;font-weight:700}
+.callout.defn{background:#eef0e2;border-color:#9aa06e}
+.callout.defn .lab{background:#7c8348;color:#fff}
+.callout.thm{background:#f5e6cf;border-color:#c98f4e}
+.callout.thm .lab{background:#b5722f;color:#fff}
+.callout.lem{background:#efe2dc;border-color:#b98a78}
+.callout.lem .lab{background:#9a5a45;color:#fff}
+.callout.proof{background:#e9e1d2;border-color:#a99a78;font-size:1.02rem}
+.callout.proof .lab{background:#7a6a4a;color:#fff}
+.callout.danger{background:#f3ddd4;border-color:#c0735c}
+.callout.danger .lab{background:#9a3f2c;color:#fff}
+
+/* math + plain words */
+.math{font-family:var(--font-mono);background:#2a2018;color:#ffe7c2;border-radius:9px;padding:12px 14px;margin:10px 0;
+  font-size:1rem;line-height:1.5;overflow-x:auto;border:1px solid rgba(255,200,130,.25)}
+.gloss{display:flex;gap:10px;align-items:flex-start;background:#e4ead8;border:1px dashed #8d9b66;border-radius:9px;
+  padding:9px 12px;margin:6px 0 12px;font-size:1.02rem;color:#33401f}
+.gloss::before{content:"🗣";flex:0 0 auto;font-size:1.1rem;filter:saturate(.7)}
+.gloss b{color:#3a5018}
+
+.say{display:flex;gap:10px;align-items:flex-start;background:#fff4dd;border:1px solid #e0b56a;border-radius:9px;
+  padding:9px 12px;margin:8px 0;color:#5a3a16}
+.say::before{content:"🗨";flex:0 0 auto}
+
+/* ---------- BLACKBOARD ---------- */
+.board{
+  background:
+    radial-gradient(120% 120% at 30% 0%, rgba(255,255,255,.04), transparent 50%),
+    linear-gradient(160deg,#33272d,#271d25);
+  border:10px solid #5a3c28;border-radius:10px;color:var(--chalk);
+  padding:22px 26px;box-shadow:0 16px 50px rgba(0,0,0,.5), inset 0 0 80px rgba(0,0,0,.35);
+  font-family:var(--font-body);position:relative;
+}
+.board::after{content:"";position:absolute;inset:0;border-radius:4px;pointer-events:none;
+  background-image:radial-gradient(rgba(255,255,255,.04) 1px, transparent 1px);background-size:7px 7px;opacity:.5}
+.board h3{color:#fff;border:none;font-family:var(--font-display)}
+.board-intro{color:#bcd2c2;font-style:italic;margin-bottom:14px}
+.board-step{display:grid;grid-template-columns:30px 1fr;gap:12px;margin:14px 0;align-items:start;position:relative;z-index:1}
+.board-step .n{width:28px;height:28px;border-radius:50%;border:1.5px solid #87a890;color:#cfe7d6;
+  display:flex;align-items:center;justify-content:center;font-family:var(--font-mono);font-size:.85rem;flex:0 0 auto}
+.board-write{font-family:var(--font-mono);font-size:1.04rem;color:#fff;background:rgba(255,255,255,.05);
+  border-left:3px solid var(--sunlit);padding:6px 10px;border-radius:0 8px 8px 0;white-space:pre-wrap}
+.board-write .chalkrune{color:#ffe08a;font-weight:700}
+.board-say{color:#bcd2c2;font-style:italic;margin-top:5px;font-size:1.04rem}
+.board-say::before{content:"say:  ";font-style:normal;font-family:var(--font-mono);font-size:.7rem;letter-spacing:2px;
+  text-transform:uppercase;color:#7fae8e}
+
+/* ---------- QUIZ / CHALLENGE ---------- */
+.quizwrap{background:linear-gradient(160deg, var(--quiz-bg-1), var(--quiz-bg-2));border:1px solid var(--hairline);
+  border-radius:14px;padding:20px 22px}
+.qprogress{font-family:var(--font-mono);font-size:.72rem;letter-spacing:2px;color:var(--text-mute);text-transform:uppercase}
+.qtier{display:inline-block;font-family:var(--font-mono);font-size:.62rem;letter-spacing:1px;text-transform:uppercase;
+  padding:2px 8px;border-radius:20px;margin-left:8px;border:1px solid}
+.tier-recall{color:var(--gold);border-color:rgba(246,186,110,.5)}
+.tier-grasp{color:var(--tier-grasp);border-color:rgba(159,176,196,.5)}
+.tier-apply{color:var(--good);border-color:rgba(158,201,138,.5)}
+.tier-prove{color:var(--dusty-rose);border-color:rgba(183,124,123,.6)}
+.qtext{font-size:1.22rem;color:var(--text-strong);margin:10px 0 16px;line-height:1.4}
+.qtext code,.scroll code,.board code{font-family:var(--font-mono);background:var(--code-bg);padding:1px 6px;border-radius:5px;font-size:.92em}
+.opts{display:grid;gap:10px}
+.opt{text-align:left;cursor:pointer;border:1px solid var(--hairline);background:var(--surface);
+  color:var(--text);padding:12px 15px;border-radius:11px;font-size:1.04rem;font-family:var(--font-body);transition:.15s}
+.opt:hover{border-color:var(--gold);background:rgba(246,186,110,.1)}
+.opt:focus-visible{outline:2px solid var(--sunlit);outline-offset:2px}
+.opt.correct{border-color:var(--good);background:rgba(158,201,138,.18);color:var(--text-strong)}
+.opt.wrong{border-color:var(--bad);background:rgba(224,138,114,.16);color:var(--text-strong)}
+.opt:disabled{cursor:default}
+.fillrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.fillrow input{font-family:var(--font-mono);font-size:1.05rem;background:var(--input-bg);border:1px solid var(--hairline);
+  color:var(--input-text);border-radius:9px;padding:10px 12px;min-width:200px;flex:1}
+.fillrow input:focus{outline:2px solid var(--sunlit)}
+.feedback{margin-top:14px;padding:12px 15px;border-radius:11px;font-size:1.05rem;display:none}
+.feedback.show{display:block;animation:rise .25s ease both}
+.feedback.good{background:rgba(158,201,138,.14);border:1px solid rgba(158,201,138,.5);color:var(--text-strong)}
+.feedback.bad{background:rgba(224,138,114,.12);border:1px solid rgba(224,138,114,.5);color:var(--text-strong)}
+.feedback b{color:var(--sunlit)}
+
+/* order challenge */
+.orderlist{display:grid;gap:8px;margin:8px 0}
+.orderitem{display:flex;gap:10px;align-items:center;background:var(--surface-2);border:1px solid var(--hairline);
+  border-radius:10px;padding:8px 10px}
+.orderitem .txt{flex:1;font-size:1rem;color:var(--text)}
+.orderitem .mv{display:flex;flex-direction:column;gap:2px}
+.minibtn{cursor:pointer;border:1px solid var(--hairline);background:rgba(246,186,110,.08);color:var(--text);
+  width:26px;height:20px;border-radius:6px;font-size:.7rem;line-height:1;display:flex;align-items:center;justify-content:center}
+.minibtn:hover{background:rgba(246,186,110,.25)}
+
+/* ---------- GALE-SHAPLEY VISUALIZER ---------- */
+.gswrap{background:linear-gradient(160deg, var(--gs-bg-1), var(--gs-bg-2));border:1px solid var(--hairline);
+  border-radius:16px;padding:18px 20px}
+.gs-controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:14px}
+.gs-day{font-family:var(--font-display);font-size:1.2rem;color:var(--sunlit);margin-left:auto}
+.gs-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+@media(max-width:720px){.gs-grid{grid-template-columns:1fr}}
+.gs-col h4{font-family:var(--font-mono);font-size:.72rem;letter-spacing:2px;text-transform:uppercase;margin:0 0 8px}
+.gs-col.boys h4{color:var(--seelie)}
+.gs-col.girls h4{color:var(--unseelie)}
+.person{border-radius:11px;padding:9px 11px;margin-bottom:9px;border:1px solid var(--hairline-soft);background:var(--surface)}
+.person .nm{font-family:var(--font-display);font-size:1rem;color:var(--text-strong);display:flex;align-items:center;gap:8px}
+.person .badge{font-family:var(--font-mono);font-size:.6rem;letter-spacing:1px;padding:1px 7px;border-radius:20px;text-transform:uppercase}
+.badge.serenade{background:rgba(246,186,110,.2);color:var(--gold);border:1px solid rgba(246,186,110,.5)}
+.badge.home{background:rgba(120,120,130,.15);color:var(--slate-2);border:1px solid rgba(120,120,130,.4)}
+.badge.held{background:rgba(158,201,138,.18);color:var(--good);border:1px solid rgba(158,201,138,.5)}
+.badge.wed{background:rgba(246,186,110,.25);color:var(--sunlit);border:1px solid var(--gold)}
+.preflist{display:flex;gap:5px;flex-wrap:wrap;margin-top:6px}
+.pref{font-family:var(--font-mono);font-size:.82rem;padding:3px 8px;border-radius:7px;border:1px solid var(--hairline-soft);
+  background:var(--surface-2);color:var(--text-soft)}
+.pref.crossed{text-decoration:line-through;opacity:.4;border-style:dashed}
+.pref.current{border-color:var(--gold);background:rgba(246,186,110,.18);color:var(--text-strong);box-shadow:0 0 10px rgba(246,186,110,.3)}
+.suitors{margin-top:6px;font-size:.92rem;color:var(--text-soft)}
+.suitors .s-held{color:var(--good);font-weight:600}
+.suitors .s-rej{color:var(--bad);text-decoration:line-through;opacity:.7}
+.gs-narrate{margin-top:14px;background:rgba(246,186,110,.07);border:1px solid var(--hairline);border-radius:11px;padding:12px 15px;
+  font-size:1.05rem;color:var(--text-soft);min-height:54px}
+.gs-narrate b{color:var(--sunlit)}
+.phase{font-family:var(--font-mono);font-size:.66rem;letter-spacing:2px;text-transform:uppercase;color:var(--gold-deep);margin-right:8px}
+.statetable{width:100%;border-collapse:collapse;margin-top:14px;font-size:.86rem}
+.statetable th,.statetable td{border:1px solid var(--hairline-soft);padding:5px 8px;text-align:left;font-family:var(--font-mono)}
+.statetable th{background:rgba(246,186,110,.1);color:var(--gold);font-weight:700;letter-spacing:1px}
+.statetable td{color:var(--text-soft)}
+
+/* ---------- CARDS / MODALS ---------- */
+.modal{position:fixed;inset:0;z-index:60;display:none;align-items:flex-start;justify-content:center;
+  background:var(--modal-overlay);backdrop-filter:blur(6px);padding:30px 16px;overflow:auto}
+.modal.open{display:flex;animation:rise .25s ease both}
+.modal-box{max-width:1000px;width:100%;background:linear-gradient(160deg,var(--modal-bg-1),var(--modal-bg-2));border:1px solid var(--hairline);
+  border-radius:18px;padding:22px 24px;box-shadow:0 30px 80px var(--shadow-strong)}
+.modal-box h2{color:var(--text-strong);margin:0 0 4px;font-size:1.6rem}
+.modal-box .sub{color:var(--text-mute);font-style:italic;margin-bottom:16px}
+.modal-close{float:right;cursor:pointer;border:1px solid var(--hairline);background:transparent;color:var(--text);
+  width:34px;height:34px;border-radius:9px;font-size:1.1rem}
+.modal-close:hover{background:rgba(246,186,110,.15)}
+
+.cardgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(190px,1fr));gap:14px}
+.gcard{border-radius:14px;padding:14px;min-height:200px;display:flex;flex-direction:column;position:relative;overflow:hidden;
+  border:1px solid var(--hairline);background:linear-gradient(165deg,var(--card-bg-1),var(--card-bg-2));transition:.2s}
+.gcard.have:hover{transform:translateY(-4px) rotate(-.5deg);box-shadow:0 14px 34px var(--shadow-strong)}
+.gcard.locked{opacity:.45;filter:grayscale(.6)}
+.gcard .rarity{position:absolute;top:0;right:0;font-family:var(--font-mono);font-size:.56rem;letter-spacing:1px;
+  padding:3px 8px;border-bottom-left-radius:10px;text-transform:uppercase;font-weight:700}
+.r-common{background:#6f707b;color:#fff}
+.r-rare{background:#5A6672;color:#dff}
+.r-epic{background:#995647;color:#ffe}
+.r-legendary{background:linear-gradient(90deg,var(--gold-deep),var(--sunlit));color:var(--on-accent)}
+.gcard .ctype{font-family:var(--font-mono);font-size:.62rem;letter-spacing:1px;text-transform:uppercase;color:var(--gold-deep)}
+.gcard .cname{font-family:var(--font-display);font-size:1.08rem;color:var(--text-strong);margin:4px 0 8px}
+.gcard .cbody{font-size:.95rem;color:var(--text-soft);line-height:1.4;flex:1}
+.gcard .lockmsg{margin-top:auto;font-family:var(--font-mono);font-size:.66rem;color:var(--slate-2);letter-spacing:1px}
+
+.boon{display:flex;gap:12px;align-items:center;padding:12px;border-radius:12px;border:1px solid var(--hairline);
+  background:var(--surface);margin-bottom:10px}
+.boon.locked{opacity:.5}
+.boon .ico{font-size:1.7rem;flex:0 0 auto;filter:drop-shadow(0 0 8px rgba(246,186,110,.4))}
+.boon .bname{font-family:var(--font-display);color:var(--text-strong);font-size:1.05rem}
+.boon .bdesc{font-size:.92rem;color:var(--text-mute)}
+.boon .chk{margin-left:auto;font-size:1.2rem}
+
+/* toasts */
+#toasts{position:fixed;right:18px;bottom:18px;z-index:80;display:flex;flex-direction:column;gap:10px;max-width:320px}
+.toast{background:linear-gradient(160deg,var(--toast-bg-1),var(--toast-bg-2));border:1px solid var(--gold);border-radius:12px;padding:12px 14px;
+  box-shadow:0 12px 34px var(--shadow-strong);animation:toastin .4s ease both}
+.toast .tt{font-family:var(--font-display);color:var(--sunlit);font-size:1rem;display:flex;align-items:center;gap:8px}
+.toast .td{font-size:.9rem;color:var(--text-soft);margin-top:3px}
+@keyframes toastin{from{opacity:0;transform:translateX(30px)}to{opacity:1;transform:none}}
+
+/* daily rehearsal banner */
+.daily{display:flex;gap:12px;align-items:center;flex-wrap:wrap;background:linear-gradient(120deg,rgba(90,102,114,.18),rgba(246,186,110,.1));
+  border:1px solid var(--hairline);border-radius:14px;padding:14px 18px;margin-top:18px}
+.daily .di{font-size:1.6rem}
+.daily .dtxt{flex:1;min-width:200px;color:var(--text-soft)}
+.daily .dtxt b{color:var(--sunlit);font-family:var(--font-display)}
+
+.foot{margin-top:30px;text-align:center;color:var(--slate-2);font-size:.82rem;font-family:var(--font-mono);letter-spacing:1px}
+
+@media (prefers-reduced-motion: reduce){
+  *{animation-duration:.001s !important;transition-duration:.05s !important}
+  body::before{animation:none}
+}
+.exam-q{font-size:1.18rem;color:var(--text-strong);line-height:1.45;margin:8px 0 14px}
+.checklist{display:grid;gap:8px;margin:12px 0}
+.check{display:flex;gap:10px;align-items:flex-start;background:var(--surface);border:1px solid var(--hairline);
+  border-radius:10px;padding:9px 12px;cursor:pointer}
+.check input{margin-top:4px;accent-color:var(--gold)}
+.check .ct{font-size:1.02rem;color:var(--text-soft)}
+.modelans{background:#e8d2b2;color:#2c2018;border-radius:12px;padding:16px 18px;margin-top:12px;display:none;line-height:1.55}
+.modelans.show{display:block}
+.modelans h4{color:#6e2f24;margin:.6em 0 .2em}
+
+/* ---------- FAE DUST SPARKLES ---------- */
+.sparkle {
+  position: absolute;
+  width: 4px;
+  height: 4px;
+  background: var(--sand-2);
+  box-shadow: 0 0 10px 2px var(--desert-sand);
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  animation: twinkle 0.7s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+}
+
+@keyframes twinkle {
+  0% { opacity: 1; transform: scale(1) translateY(0) rotate(0deg); }
+  100% { opacity: 0; transform: scale(0.2) translateY(-25px) rotate(45deg); }
+}
+</style>
+</head>
+<body>
+
+<header id="hud">
+  <div class="crest">✦ Stable Crown</div>
+  <div class="hud-stat"><span class="lab">Rank</span><span class="val" id="hud-level">I · Page</span></div>
+  <div class="xpwrap hud-stat"><span class="lab" id="hud-xplab">0 / 100 motes</span><div class="xpbar"><span id="hud-xp"></span></div></div>
+  <div class="hud-stat"><span class="lab">Streak</span><span class="val" id="hud-streak">🔥 0</span></div>
+  <div class="hud-stat"><span class="lab">Cards</span><span class="val" id="hud-cards">0/12</span></div>
+  <div class="hud-actions">
+    <div class="theme-toggle" id="theme-toggle" role="group" aria-label="Theme">
+      <span class="seg" data-theme-choice="dark">☾ Unseelie</span>
+      <span class="seg" data-theme-choice="light">☀ Seelie</span>
+    </div>
+    <button class="btn ghost" id="nav-map">⌖ Map</button>
+    <button class="btn ghost" id="nav-cards">🂠 Cards</button>
+    <button class="btn ghost" id="nav-boons">✶ Boons</button>
+    <button class="btn primary" id="nav-exam">⚖ Oral Exam</button>
+    <button class="btn ghost" id="nav-reset" title="Erase progress">↺</button>
+  </div>
+</header>
+
+<main>
+  <!-- MAP -->
+  <section id="view-map" class="view active">
+    <div class="map-hero">
+      <div class="eyebrow">An Oral-Exam Study Quest</div>
+      <h1>Courts of the Stable Crown<span class="sub">Gale &amp; Shapley · Stable Matching</span></h1>
+      <p>The Twilight Courts will not crown a ruler until the realm is <em>stable</em> — no two souls left longing for each other across the matching. Walk the ten courts, master every definition, theorem, lemma and proof exactly as you must recite them at the blackboard, then face the Examiner.</p>
+      <div class="map-legend">
+        <span><span class="dot" style="background:var(--cinnamon)"></span>Foundations</span>
+        <span><span class="dot" style="background:var(--seelie)"></span>Seelie / boys' court</span>
+        <span><span class="dot" style="background:var(--unseelie)"></span>Unseelie / girls' court</span>
+        <span><span class="rune" style="font-size:.8em">gold</span> = memorise word-for-word</span>
+      </div>
+    </div>
+    <div class="daily" id="daily-banner"></div>
+    <div class="courts" id="courts"></div>
+    <div class="foot"></div>
+  </section>
+
+  <!-- COURT DETAIL -->
+  <section id="view-court" class="view"></section>
+</main>
+
+<!-- MODALS -->
+<div class="modal" id="cards-modal"><div class="modal-box">
+  <button class="modal-close" data-close>✕</button>
+  <h2>🂠 The Card Court</h2>
+  <div class="sub">Each theorem, lemma and law becomes a card when you master its court. Collect all twelve.</div>
+  <div class="cardgrid" id="cardgrid"></div>
+</div></div>
+
+<div class="modal" id="boons-modal"><div class="modal-box">
+  <button class="modal-close" data-close>✕</button>
+  <h2>✶ Boons of the Fae</h2>
+  <div class="sub">Achievements granted for deeds of study.</div>
+  <div id="boonlist"></div>
+</div></div>
+
+<div class="modal" id="exam-modal"><div class="modal-box">
+  <button class="modal-close" data-close>✕</button>
+  <h2>⚖ The Examiner's Chamber</h2>
+  <div class="sub">A topic is drawn at random, as in the real oral. Chalk in hand — cover every item, then reveal the model recitation and grade yourself honestly.</div>
+  <div id="exam-body"></div>
+</div></div>
+
+<div id="toasts"></div>
+
+<script>
+/* ===================== SAFE STORAGE ===================== */
+const Store=(()=>{let mem={},ok=true;try{localStorage.setItem('__t','1');localStorage.removeItem('__t');}catch(e){ok=false;}
+return{get(k){try{if(ok){const v=localStorage.getItem(k);return v==null?null:JSON.parse(v);}}catch(e){}return (k in mem)?mem[k]:null;},
+set(k,v){try{if(ok){localStorage.setItem(k,JSON.stringify(v));return;}}catch(e){}mem[k]=v;}};})();
+
+/* ===================== CARDS ===================== */
+const CARDS={
+ problem:{type:'Foundation',name:'The Stable Crown',rar:'epic',body:'A matching is <b>stable</b> when no two souls prefer each other to their partners. Self-interest can break no pact in secret.'},
+ rogue:{type:'Definition',name:'The Rogue Couple',rar:'rare',body:'Boy b and girl g are a rogue couple for matching M if b and g prefer each other to their partners in M.'},
+ triangle:{type:'Counter-example',name:'The Love Triangle',rar:'rare',body:'Allow same-sex pairing and stability can vanish: three rivals + a last-choice fourth → no stable matching exists.'},
+ law:{type:'The Setting',name:'Law of the Realm',rar:'common',body:'n boys, n girls; complete preference lists, no ties. Goal: a perfect matching with no rogue couples.'},
+ ritual:{type:'Algorithm',name:'The Mating Ritual',rar:'legendary',body:'Gale–Shapley. Each day: boys serenade, girls keep their favourite suitor and reject the rest, rejected boys cross her off. Ends when every girl has ≤1 suitor.'},
+ hourglass:{type:'Theorem I',name:'The Hourglass',rar:'epic',body:'Gale–Shapley terminates within n²+1 days — there are only n² names to cross off in total.'},
+ vows:{type:'Lemmas I–IV',name:'The Four Vows',rar:'rare',body:'A boy courts every girl he prefers more; an unwed boy courted everyone; a girl keeps her favourite suitor; a courted girl always weds.'},
+ wedding:{type:'Theorem II',name:'The Wedding',rar:'epic',body:'Everyone is married. An unwed boy would have courted every girl, so every girl weds — and equal numbers force every boy to wed too.'},
+ stable:{type:'Theorem III',name:'The Unbroken Bond',rar:'legendary',body:'Gale–Shapley produces stable marriages. No rogue couple can survive: a girl only ever rejects a boy for someone she prefers more.'},
+ optimal:{type:'Theorem IV',name:'The Boy-Optimal Crown',rar:'legendary',body:'Every boy gets his optimal mate — his most-preferred partner across all stable matchings.'},
+ pessimal:{type:'Theorem V',name:'The Girl-Pessimal Veil',rar:'epic',body:'Every girl gets her pessimal mate — her least-preferred partner across all stable matchings. The boys hold the power.'},
+ echo:{type:'On Multiplicity',name:'The Echoing Courts',rar:'rare',body:'Swapping roles gives the girl-optimal / boy-pessimal matching. The count of stable matchings can be 2^(n/2) — exponential.'},
+ balance:{type:'Optimisation',name:'The Scales of Balance',rar:'epic',body:'Regret, egalitarian and sex-equal costs measure a matching\u2019s fairness. Regret & egalitarian are polynomial; sex-equal is NP-hard.'}
+};
+
+/* ===================== BOONS (achievements) ===================== */
+const BOONS=[
+ {id:'first_court',ico:'🌙',name:'Initiate of the Crown',desc:'Complete your first court.'},
+ {id:'first_step',ico:'🎻',name:'First Serenade',desc:'Advance the Mating Ritual once in the visualiser.'},
+ {id:'terminate',ico:'⏳',name:'The Quiet Day',desc:'Run the ritual to its termination.'},
+ {id:'perfect',ico:'💎',name:'Flawless Recitation',desc:'Clear a court\u2019s trials with no wrong answers.'},
+ {id:'triangle',ico:'🔺',name:'Breaker of Triangles',desc:'Master the Court of Mirrors.'},
+ {id:'half_cards',ico:'🂡',name:'Card Collector',desc:'Collect half of the cards.'},
+ {id:'streak3',ico:'🔥',name:'Devoted',desc:'Reach a 3-day study streak.'},
+ {id:'exam_once',ico:'⚖',name:'Faced the Examiner',desc:'Complete one Oral Exam trial.'},
+ {id:'exam_ace',ico:'👑',name:'The Examiner Bows',desc:'Tick every item on an Oral Exam recitation.'},
+ {id:'all_cards',ico:'🏆',name:'Master of the Card Court',desc:'Collect every card.'},
+ {id:'sovereign',ico:'✦',name:'Sovereign of the Stable Crown',desc:'Master all ten courts.'}
+];
+
+/* ===================== GALE–SHAPLEY EXAMPLE ===================== */
+const GS={
+ boys:['b1','b2','b3','b4'],
+ girls:['g1','g2','g3','g4'],
+ bp:{b1:['g1','g2','g3','g4'],b2:['g1','g2','g3','g4'],b3:['g2','g1','g4','g3'],b4:['g4','g3','g1','g2']},
+ gp:{g1:['b4','b3','b2','b1'],g2:['b1','b2','b3','b4'],g3:['b1','b2','b3','b4'],g4:['b3','b1','b2','b4']}
+};
+
+/* ===================== COURTS ===================== */
+const COURTS=[
+{
+ id:'origins',name:'The Court of Origins',fae:'where the realm first asks to be made whole',cls:'origin',cards:['problem'],
+ story:'You arrive at twilight. The old Crown lies cracked: the last sovereign matched the courts carelessly, and lovers slipped away in secret. Before anything is rebuilt, you must learn what it even means for a realm to hold.',
+ scroll:`
+ <h3>What problem are we solving? (say this first at the board)</h3>
+ <p>The Stable Matching Problem began in <rune>1962</rune>, when <rune>David Gale and Lloyd Shapley</rune>, two mathematical economists, asked whether one could design a college-admissions or job-recruiting process that is <rune>self-enforcing</rune>.</p>
+ <p><b>In plain words:</b> we want to pair people from two sides (applicants &amp; employers) so that nobody has any reason to sneak off and cut a private deal. If a pairing has that property, it is <b>stable</b>.</p>
+ <div class="callout defn"><span class="lab">Stability condition</span>
+ <p>Given preferences among employers and applicants, we assign applicants to employers so that, for every employer <code>E</code> and every applicant <code>A</code> who is <i>not</i> assigned to <code>E</code>, <rune>at least one</rune> of the following holds:</p>
+ <ul>
+  <li><rune>E prefers all of its accepted applicants over A</rune>, or</li>
+  <li><rune>A prefers her current assignment over working for employer E.</rune></li>
+ </ul></div>
+ <div class="gloss"><span><b>Reading it like a human:</b> take any applicant A and any employer E she did <i>not</i> end up with. For the deal to be safe, either E is already happy with everyone it hired (it wouldn\u2019t want A instead), <i>or</i> A is happy where she is (she wouldn\u2019t want E instead). If <u>both</u> failed at once — E wants A <u>and</u> A wants E — they would defect. We forbid exactly that.</span></div>
+ <p><rune>If this condition holds, the outcome is stable: individual self-interest will prevent any applicant-employer deal from being made behind the scenes.</rune></p>
+ <h4>What it\u2019s for · example usages</h4>
+ <p>Designing a college-admissions process or a job-recruiting process that nobody wants to game. The same idea later powered real <b>market design</b> — medical-residency matching and similar markets — which is why the work won a Nobel Prize (you\u2019ll meet that fact in the Ritual Court).</p>`,
+ board:[
+  {w:'The Stable Matching Problem (Gale & Shapley, 1962)',s:'I\u2019m proving things about an algorithm that builds a self-enforcing assignment of two sides.'},
+  {w:'Goal: assign applicants A to employers E so that for every E and every A NOT assigned to E:',s:'I state the stability condition next, as a disjunction of two cases.'},
+  {w:'  (1) E prefers all accepted applicants over A,  OR\n  (2) A prefers her assignment over E.',s:'At least one must hold — if both fail, that pair defects.'},
+  {w:'\u2234 stable = no pair can profitably deal behind the scenes.',s:'This is the property the whole algorithm is built to guarantee.'}
+ ],
+ quiz:[
+  {tier:'recall',type:'mcq',q:'Who posed the Stable Matching Problem, and in what year?',opts:['Gale & Shapley, 1962','Gale & Roth, 1984','Shapley & Nash, 1950','Knuth & Tarjan, 1976'],a:0},
+  {tier:'recall',type:'fill',q:'Complete the word-for-word phrase: "If this condition holds, the outcome is ___."',a:['stable'],hint:'one word'},
+  {tier:'grasp',type:'mcq',q:'A is NOT assigned to E. Which single situation would make the pairing UNSTABLE (a defection)?',opts:['E wants A more than someone it hired, AND A wants E more than her assignment','E is happy with all its hires','A prefers her current assignment','A and E have never met'],a:0},
+  {tier:'grasp',type:'tf',q:'"Self-enforcing" means a referee must police the matches so nobody cheats.',a:false,why:'The opposite: self-enforcing means individual self-interest alone keeps it stable — no referee needed.'},
+  {tier:'apply',type:'mcq',q:'Applicant A and employer E are NOT assigned to each other. E prefers A to its worst current hire. What MUST be true to prevent them from becoming a rogue couple?',opts:['A must prefer her current assignment over E','E must fire its worst hire','A must be unemployed','E must be completely full'],a:0},
+  {tier:'grasp',type:'tf',q:'A matching is unstable if an employer E is perfectly happy with all its current hires, but applicant A prefers E to her current assignment.',a:false,why:'False. For instability, BOTH sides must want to defect. If E is happy with its hires and doesn’t want A, E will refuse the private deal. The matching remains stable.'}
+ ]
+},
+{
+ id:'mirrors',name:'The Court of Mirrors',fae:'where longing reflects back, and triangles shatter',cls:'origin',cards:['rogue','triangle'],
+ story:'In the hall of mirrors you see every pairing reflected with its secret discontents. Here you learn the one thing that ruins a realm — the rogue couple — and you witness a cursed triangle where no peace is possible at all.',
+ scroll:`
+ <h3>The simplified world: stable marriage</h3>
+ <p>We match <b>boys</b> and <b>girls</b>, each with a preference order over possible mates of the opposite sex. <rune>The preferences don\u2019t have to be symmetric</rune> (Alice may adore Brad while Brad pines for Angelina).</p>
+ <div class="callout danger"><span class="lab">Definition · rogue couple</span>
+ <p><rune>Given a matching M, a boy b and a girl g are a rogue couple for M if b and g prefer each other to their partners in M.</rune></p></div>
+ <div class="gloss"><span><b>Plainly:</b> a rogue couple is two people, currently with other partners, who would <i>both</i> rather be with each other. They\u2019re the late-night-homework defectors who wreck the matching.</span></div>
+ <div class="callout defn"><span class="lab">Definition · stable matching</span>
+ <p><rune>A matching is stable if there are no rogue couples.</rune> We also assume <rune>preferences do not change over time</rune> — they\u2019re known at the start and stay fixed.</p></div>
+ <p><b>Main goal:</b> <rune>find a perfect matching that is stable.</rune> (In the Brad/Angelina example, pairing Brad–Angelina and Bob–Alice is stable: Bob and Alice are unhappy, but since neither Brad nor Angelina prefers anyone to each other, no rogue couple can form.)</p>
+ <h3>It is not obvious a stable matching always exists</h3>
+ <p><skipnot>If you allow boys to prefer boys and girls to prefer girls, there are examples with no stable matching.</skipnot> The classic is a <rune>"love triangle" with a fourth person who is everyone\u2019s last choice.</rune></p>
+ <div class="callout proof"><span class="lab">Proof · why the triangle has no stable matching (by contradiction)</span>
+ <p><rune>Assume, for contradiction, that there is a stable matching.</rune> Then <b>two members of the love triangle must be matched</b>. Without loss of generality (by symmetry), assume <b>Bill is matched with Bob</b>. Then the other pair must be <b>Brad with Brian</b>. But <b>Bill likes Brad best and Brad prefers Bill to Brian</b>, so <rune>Bill and Brad form a rogue couple</rune> — contradiction. Hence no stable matching is possible. (The fourth person\u2019s preferences don\u2019t even matter.)</p></div>
+ <p><b>The surprise to remember:</b> stability can fail in the same-sex / unisex case, <rune>but a stable matching can always be found in the two-sided case</rune> (boys only pair with girls). That two-sided guarantee is what the rest of the quest proves.</p>`,
+ board:[
+  {w:'Def (rogue couple): in matching M, (b,g) is rogue if b and g prefer EACH OTHER to their M-partners.',s:'Two people who\u2019d both rather swap into each other.'},
+  {w:'Def (stable): M is stable  \u21FA  M has no rogue couple.',s:'Stability is literally the absence of rogue couples.'},
+  {w:'Goal: find a PERFECT matching that is stable.',s:'Perfect = everyone paired one-to-one; stable = no rogue couple.'},
+  {w:'Claim: same-sex allowed \u21D2 stable matching may NOT exist (love triangle + last-choice 4th).',s:'I sketch the contradiction: WLOG Bill\u2013Bob, forcing Brad\u2013Brian, then Bill&Brad are rogue.'}
+ ],
+ quiz:[
+  {tier:'recall',type:'fill',q:'Finish verbatim: "a boy b and a girl g are a rogue couple for M if b and g ___ to their partners in M."',a:['prefer each other'],hint:'three words'},
+  {tier:'recall',type:'mcq',q:'A matching is stable exactly when…',opts:['there are no rogue couples','everyone gets their first choice','boys and girls are equal in number','the algorithm terminates'],a:0},
+  {tier:'prove',type:'order',q:'Arrange the love-triangle impossibility proof in the order you\u2019d say it:',items:['Assume, for contradiction, a stable matching exists.','Two members of the triangle must be matched; WLOG Bill\u2013Bob.','Then the remaining pair is forced: Brad\u2013Brian.','Bill likes Brad best and Brad prefers Bill to Brian.','So Bill & Brad are a rogue couple — contradiction.']},
+  {tier:'grasp',type:'tf',q:'In the love triangle, the fourth person\u2019s preferences are what cause the instability.',a:false,why:'The fourth person is everyone\u2019s last choice; their preferences "do not even matter." The triangle itself causes the instability.'},
+  {tier:'prove',type:'mcq',q:'In the unisex love triangle (Bill, Brad, Bob) + a 4th last-choice person, why does the 4th person\'s preference mathematically not matter?',opts:['Any perfect matching forces two triangle members together, leaving the 3rd to pair with the 4th, inevitably creating a rogue couple among the triangle.','The 4th person is always isolated and left unwed.','The 4th person has no preference list.','The algorithm stops before evaluating the 4th person.'],a:0},
+  {tier:'apply',type:'fill',q:'A rogue couple requires ___ sides to want each other more than their current partners to successfully break the matching.',a:['both','two'],hint:'how many?'}
+ ]
+},
+{
+ id:'law',name:'The Court of Law',fae:'where the realm\u2019s exact charter is written in stone',cls:'origin',cards:['law'],
+ story:'No spell works without its precise wording. In the Court of Law you carve the formal charter — the exact setting and goal — that every later theorem leans on.',
+ scroll:`
+ <h3>The formal statement (write this charter on the board)</h3>
+ <h4>The setting</h4>
+ <ul>
+  <li><rune>There are n boys and n girls; the number of boys and girls is the same.</rune></li>
+  <li><rune>Each boy has a ranked preference list of the girls.</rune></li>
+  <li><rune>Each girl has a ranked preference list of the boys.</rune></li>
+  <li><rune>The lists are complete and have no ties; each boy ranks every girl and each girl ranks every boy.</rune></li>
+ </ul>
+ <h4>The goal</h4>
+ <p><rune>Pair each boy with a unique girl so that no rogue couples exist.</rune> In other words, <rune>find a perfect matching in which every boy and girl is paired one-to-one, with no potential instability.</rune></p>
+ <div class="gloss"><span><b>Why each clause matters:</b> <b>equal numbers</b> let us aim for a <i>perfect</i> matching (nobody left over). <b>Complete lists</b> mean everyone can, in principle, be paired with anyone. <b>No ties</b> means "prefers" is always a sharp, unambiguous choice — crucial, because rogue couples and proofs depend on clean strict preferences.</span></div>
+ <p><b>Two pieces of vocabulary to keep straight:</b> a <b>perfect matching</b> pairs everyone one-to-one; a <b>stable matching</b> additionally has no rogue couples. The goal asks for a matching that is <i>both</i>.</p>`,
+ board:[
+  {w:'Setting:  n boys, n girls  (|boys| = |girls| = n).',s:'Equal sizes so a perfect matching is possible.'},
+  {w:'Each boy: a ranked list of all girls.  Each girl: a ranked list of all boys.',s:'Both sides rank.'},
+  {w:'Lists are COMPLETE and have NO TIES.',s:'Everyone ranks everyone, strictly — "prefers" is always well-defined.'},
+  {w:'Goal: a PERFECT matching (one-to-one, everyone paired) with NO rogue couples.',s:'Perfect plus stable — that\u2019s the target object.'}
+ ],
+ quiz:[
+  {tier:'recall',type:'mcq',q:'Which is required of the preference lists?',opts:['Complete and no ties','Partial and may tie','Only boys rank girls','Symmetric between the sexes'],a:0},
+  {tier:'recall',type:'fill',q:'Fill the count: there are ___ boys and ___ girls (same word both blanks).',a:['n'],hint:'a single letter, used for both'},
+  {tier:'grasp',type:'mcq',q:'Why does "no ties" matter for the whole theory?',opts:['So "prefers" is always a strict, unambiguous choice','So the lists are shorter','So girls outrank boys','It doesn\u2019t matter; it\u2019s cosmetic'],a:0},
+  {tier:'grasp',type:'tf',q:'A perfect matching is automatically stable.',a:false,why:'Perfect only means everyone is paired one-to-one. Stable additionally requires no rogue couples. We want both.'},
+  {tier:'grasp',type:'tf',q:'If we allowed ties in the preference lists, the standard definition of a rogue couple (strictly preferring each other) would still perfectly guarantee a single unambiguous type of stability.',a:false,why:'False. Ties introduce "weak stability" and "super stability", completely changing the rules. Strict preferences guarantee the single clean stability you are proving.'},
+  {tier:'apply',type:'mcq',q:'Why must the preference lists be COMPLETE?',opts:['So that any boy and girl can hypothetically be matched if forced by the algorithm.','To make the algorithm run in exactly n^2 time.','So that girls have a harder time rejecting boys.','To ensure equal numbers of boys and girls.'],a:0}
+ ]
+},
+{
+ id:'ritual',name:'The Ritual Court',fae:'where boys serenade and girls hold the balcony',cls:'seelie',cards:['ritual'],
+ story:'Drums sound. The famous mating ritual begins — balconies, serenades, and the cold word "No." Learn the ceremony exactly, for the Examiner will make you perform it step by step.',
+ scroll:`
+ <h3>The Gale–Shapley algorithm</h3>
+ <p>Named for <rune>David Gale and Lloyd Shapley, who devised it in 1962</rune>. Worth a line at the board: <rune>in 2012 the Nobel Prize in Economics was awarded to Lloyd Shapley and Alvin Roth "for the theory of stable allocations and the practice of market design."</rune></p>
+ <p>The "mating ritual" takes place over several days. <rune>Each boy proposes to girls one by one, in order of preference, crossing them off his list whenever he is rejected.</rune></p>
+ <div class="callout thm"><span class="lab">The ritual · each day</span>
+ <p><b>Initial condition:</b> each of the n boys has an ordered list of the n girls; each girl an ordered list of the n boys.</p>
+ <p><b>Morning:</b></p>
+ <ul><li>Each girl stands on her balcony.</li>
+ <li><rune>Each boy stands under the balcony of his favorite girl whom he has not yet crossed off his list and serenades her.</rune> If there are no girls left on his list, he stays home and does algorithms homework.</li></ul>
+ <p><b>Afternoon:</b></p>
+ <ul><li>Girls with at least one suitor say to their <rune>favorite among the suitors that day</rune>: "Maybe I will marry you — come back tomorrow!"</li>
+ <li>To all others: "No, I will never marry you!"</li></ul>
+ <p><b>Evening:</b></p>
+ <ul><li><rune>Any boy who hears "No" crosses that girl off his list.</rune></li></ul>
+ <p><b>Termination:</b> <rune>If there is a day when every girl has at most one suitor, the ritual stops and each girl marries her current suitor (if any).</rune></p></div>
+ <div class="gloss"><span><b>The whole ceremony in one breath:</b> boys keep proposing to their best not-yet-rejected girl; each girl tentatively holds onto the best suitor she\u2019s seen so far and turns the rest away; a turned-away boy permanently crosses her off and moves down his list. Nobody is ever locked in until the calm day when no girl has competing suitors.</span></div>
+ <h4>The four things we must prove (state these as your roadmap)</h4>
+ <p><rune>The algorithm terminates · it terminates quickly · at termination there are no rogue couples · everyone is married.</rune> We also analyse <b>fairness</b>: is it better for boys or for girls?</p>
+ <p>Use the <b>Run the Ritual</b> tab to watch a full 4×4 example day by day, with every list, cross-off and held suitor shown.</p>`,
+ board:[
+  {w:'Gale\u2013Shapley (1962). [Nobel 2012: Shapley & Roth, "stable allocations & market design".]',s:'Credit and the headline fact.'},
+  {w:'MORNING: each boy serenades his favourite girl not yet crossed off (else stays home).',s:'Proposals go to the current top-of-list.'},
+  {w:'AFTERNOON: each girl says "maybe, come back tomorrow" to her favourite suitor; "No" to the rest.',s:'Tentative hold of the best so far; reject the others.'},
+  {w:'EVENING: any boy who heard "No" crosses that girl off.',s:'Rejections are permanent for that pair.'},
+  {w:'STOP when some day every girl has \u2264 1 suitor; each girl marries her current suitor.',s:'Then prove: terminates, fast, no rogue couples, everyone married.'}
+ ],
+ quiz:[
+  {tier:'recall',type:'order',q:'Put one DAY of the ritual in order (Morning → Afternoon → Evening):',items:['Morning: each boy serenades his favourite girl not yet crossed off.','Afternoon: each girl says "maybe, come back tomorrow" to her favourite suitor.','Afternoon: she tells all other suitors "No, I will never marry you!"','Evening: every boy who heard "No" crosses that girl off his list.']},
+  {tier:'recall',type:'mcq',q:'The ritual STOPS on the first day when…',opts:['every girl has at most one suitor','every boy has proposed once','all lists are empty','the boys run out of homework'],a:0},
+  {tier:'recall',type:'fill',q:'Verbatim Nobel line: in 2012 the prize went to Lloyd Shapley and ___ Roth.',a:['Alvin'],hint:'first name'},
+  {tier:'grasp',type:'mcq',q:'When a girl already holding a suitor gets a better one, what happens to the old suitor?',opts:['She rejects him; he crosses her off and moves down his list','She marries both','He waits forever under her balcony','He is removed from the problem'],a:0},
+  {tier:'apply',type:'order',q:'Order the exact sequence of events when a girl trades up for a better suitor:',items:['Boy X serenades the girl in the morning.','She checks her list and prefers X to her currently held suitor Y.','She tells X "maybe, come back tomorrow" and tells Y "No".','Y permanently crosses her off his list that evening.']},
+  {tier:'grasp',type:'mcq',q:'What happens mechanically if a boy has crossed off every single girl on his list?',opts:['He stays home and proposes to no one (though later lemmas prove this never happens).','He starts over from the top of his list.','The algorithm immediately crashes.','He is forced to marry the last girl who rejected him.'],a:0}
+ ]
+},
+{
+ id:'hourglass',name:'The Court of the Hourglass',fae:'where time itself is bounded by n²',cls:'seelie',cards:['hourglass'],
+ story:'Sand pours through a great glass. The fae fear an endless ritual — so you must prove the ceremony cannot outlast the sand: it ends within n²+1 days.',
+ scroll:`
+ <h3>Theorem 1 — termination, and a time bound</h3>
+ <div class="callout thm"><span class="lab">Theorem 1</span>
+ <p><rune>The Gale–Shapley algorithm terminates within n² + 1 days.</rune></p></div>
+ <div class="math">n\u00B2 + 1   means   (number of people on one side)\u00B2  plus one.</div>
+ <div class="gloss"><span><b>What the formula says out loud:</b> "n squared plus one." With n boys, there are n different girls a boy might cross off, and n boys — so at most n·n = n\u00B2 cross-offs total exist in the whole realm.</span></div>
+ <div class="callout proof"><span class="lab">Proof (by contradiction)</span>
+ <p><rune>Suppose, for contradiction, the algorithm does not terminate within n²+1 days.</rune> Consider any day on which it does <i>not</i> terminate. <b>On such a day some boy must cross a girl off his list.</b> Why? If the algorithm hasn\u2019t terminated, at least one girl has two or more suitors; she rejects at least one boy, and <rune>that boy crosses her name off his list</rune>.</p>
+ <p>So if the algorithm doesn\u2019t terminate in n²+1 days, <rune>at least n²+1 names must have been crossed off in total</rune>. But at the start each boy\u2019s list has n names, so <rune>the total number of names across all lists is n²</rune>; it is impossible to cross off more than this total. <b>Contradiction</b> — so it must terminate within n²+1 days.</p></div>
+ <div class="gloss"><span><b>The trick in one line:</b> every non-final day burns at least one name; there are only n\u00B2 names to burn; therefore there can be at most n\u00B2 non-final days, and the (n\u00B2+1)-th day must be the calm, final one.</span></div>
+ <p><b>The technique to name aloud:</b> <rune>this is a typical proof technique in Computer Science used to bound running time — we show the algorithm always makes progress by some measure; since there is only a finite amount of progress, it must terminate.</rune> Here the measure is <rune>the total number of names on the union of all the boys\u2019 lists.</rune></p>`,
+ board:[
+  {w:'Thm 1:  Gale\u2013Shapley terminates within  n\u00B2 + 1  days.',s:'I\u2019ll prove a finite time bound by a progress measure.'},
+  {w:'Pf (contradiction): suppose it runs past n\u00B2+1 days.',s:'Assume the negation.'},
+  {w:'Any non-terminating day: some girl has \u22652 suitors \u21D2 she rejects one \u21D2 he crosses her off.',s:'So every non-final day burns at least one name.'},
+  {w:'Past n\u00B2+1 days \u21D2 > n\u00B2 names crossed off. But total names = n\u00B7n = n\u00B2.',s:'Can\u2019t cross off more names than exist.'},
+  {w:'Contradiction \u21D2 it ends by day n\u00B2+1.  Measure = #names in union of all lists.',s:'Finite progress \u21D2 termination — the standard CS bounding technique.'}
+ ],
+ quiz:[
+  {tier:'recall',type:'fill',q:'State the bound: the algorithm terminates within ___ days.',a:['n^2+1','n²+1','n2+1','n*n+1'],hint:'an expression in n'},
+  {tier:'grasp',type:'mcq',q:'What is the "progress measure" that proves termination?',opts:['The total number of names on the union of all the boys\u2019 lists (it only goes down)','The number of married couples','The day counter','The number of balconies'],a:0},
+  {tier:'grasp',type:'mcq',q:'On a day that does NOT terminate, why must some name get crossed off?',opts:['Some girl has \u22652 suitors, so she rejects one, who then crosses her off','A boy always crosses one off daily by rule','Girls cross off boys','The day counter forces it'],a:0},
+  {tier:'prove',type:'order',q:'Order the termination proof:',items:['Suppose it does not terminate within n²+1 days.','Any non-terminating day: some girl has \u22652 suitors and rejects one.','That rejected boy crosses her off — so \u2265 n²+1 names get crossed off in total.','But the total number of names across all lists is only n².','That\u2019s impossible — contradiction, so it terminates within n²+1 days.']},
+  {tier:'prove',type:'tf',q:'It is possible for a day to pass where NO girl receives a new proposal, NO boy gets rejected, and the algorithm hasn’t terminated.',a:false,why:'False. If no one gets rejected, then every proposing boy is held. This means every girl has at most 1 suitor, which immediately triggers the termination rule.'},
+  {tier:'apply',type:'mcq',q:'What is the absolute maximum number of cross-offs that can happen across the entire realm on a single day?',opts:['n - 1 (if all n boys propose to the same girl, she holds 1 and rejects the rest)','n (everyone gets rejected)','1 (only one boy is allowed to propose per day)','n² (all lists clear at once)'],a:0}
+ ]
+},
+{
+ id:'vows',name:'The Court of Vows',fae:'four small vows that make everyone wed',cls:'unseelie',cards:['vows','wedding'],
+ story:'Four quiet vows are spoken in this court — small lemmas, each almost obvious. Yet braided together they force the whole realm to the altar: everyone is married.',
+ scroll:`
+ <h3>Four lemmas, then everyone marries</h3>
+ <div class="callout lem"><span class="lab">Lemma 1</span><p><rune>If a boy marries, then he courted every girl he liked better.</rune></p>
+ <p class="say">Proof in a breath: boys cross girls off <b>in order of preference</b>, top first. A boy marries whoever he\u2019s courting at the end, so he marries the <i>least-preferred</i> girl he courted — and therefore he prefers her to every girl he never courted.</p></div>
+ <div class="callout lem"><span class="lab">Lemma 2</span><p><rune>If a boy never marries, then he courted every girl.</rune></p>
+ <p class="say">Proof: by Theorem 1 the algorithm terminates. At the end this boy courts no one, so he must be home having crossed off <b>every</b> girl — i.e. he courted them all.</p></div>
+ <div class="callout lem"><span class="lab">Lemma 3</span><p><rune>A girl marries her favorite among her suitors.</rune></p>
+ <p class="say">Proof: a girl only rejects a boy when a more-preferred one comes along, and always keeps her most-preferred suitor among those she has seen so far.</p></div>
+ <div class="callout lem"><span class="lab">Lemma 4</span><p><rune>If a girl is ever courted, she gets married.</rune></p>
+ <p class="say">Proof: once a girl has a suitor, she keeps him until she trades up — so she never ends up alone.</p></div>
+ <div class="callout thm"><span class="lab">Theorem 2</span><p><rune>Everyone is married in the Gale–Shapley algorithm.</rune></p></div>
+ <div class="callout proof"><span class="lab">Proof (by contradiction)</span>
+ <p><rune>Suppose some boy b is not married.</rune> By <b>Lemma 2</b>, b courted every girl, so <b>every girl has been courted</b>. By <b>Lemma 4</b>, every courted girl gets married, so <b>every girl is married</b>. Since there are <rune>equal numbers of boys and girls</rune>, every boy — including b — must be married. <b>Contradiction.</b> Therefore everyone is married.</p></div>
+ <div class="gloss"><span><b>The chain to remember:</b> unwed boy → (L2) he courted all girls → all girls were courted → (L4) all girls wed → equal counts → all boys wed too → the "unwed boy" can\u2019t exist.</span></div>`,
+ board:[
+  {w:'L1: if a boy marries, he courted every girl he liked better.',s:'He proposes top-down, so he ends on the worst girl he courted — better than any he skipped.'},
+  {w:'L2: if a boy never marries, he courted every girl.',s:'At termination he\u2019s home, so he crossed off all of them.'},
+  {w:'L3: a girl marries her favourite among her suitors.',s:'She only ever rejects for someone better; keeps the best seen so far.'},
+  {w:'L4: if a girl is ever courted, she gets married.',s:'Once she has a suitor she keeps one until she trades up.'},
+  {w:'Thm 2: everyone is married. (Pf) unwed b \u2192L2 all girls courted \u2192L4 all girls wed \u2192 equal counts \u2192 all boys wed. \u21AF',s:'Contradiction kills the unwed boy.'}
+ ],
+ quiz:[
+  {tier:'recall',type:'mcq',q:'Lemma 3 says a girl marries…',opts:['her favourite among her suitors','her first proposer','the last boy to court her','her overall first choice'],a:0},
+  {tier:'recall',type:'fill',q:'Lemma 2 (verbatim ending): "If a boy never marries, then he courted ___."',a:['every girl'],hint:'two words'},
+  {tier:'grasp',type:'mcq',q:'Which two lemmas drive the Theorem-2 proof, and what closes it?',opts:['Lemma 2 then Lemma 4, closed by equal numbers of boys and girls','Lemma 1 then Lemma 3, closed by Theorem 1','Lemma 3 alone','Lemma 4 then Lemma 1, closed by induction'],a:0},
+  {tier:'prove',type:'order',q:'Order the "everyone is married" proof:',items:['Suppose some boy b is not married.','By Lemma 2, b courted every girl — so every girl was courted.','By Lemma 4, every courted girl marries — so every girl is married.','Equal numbers of boys and girls force every boy (incl. b) to be married.','Contradiction — therefore everyone is married.']},
+  {tier:'apply',type:'mcq',q:'If we observe a boy proposing to the 3rd girl on his preference list, what do we know for absolute certain based on Lemma 1?',opts:['He has already proposed to and been rejected by his 1st and 2nd choices.','His 1st and 2nd choices are married to each other.','He will definitely marry this 3rd girl.','He has skipped his 1st and 2nd choices.'],a:0},
+  {tier:'grasp',type:'tf',q:'By Lemma 4, a girl might accept a suitor, later reject him, and end up totally alone and unmarried at the end.',a:false,why:'False. Lemma 4 guarantees that once she is courted, she ALWAYS holds at least one suitor. She only drops a suitor to swap for a better one.'}
+ ]
+},
+{
+ id:'stability',name:'The Court of Stability',fae:'where no rogue couple may survive',cls:'unseelie',cards:['stable'],
+ story:'The keystone court. Here you prove the Crown\u2019s central promise: the ritual\u2019s matching has no rogue couple. Master this and the realm holds.',
+ scroll:`
+ <h3>Theorem 3 — the matching is stable</h3>
+ <div class="callout thm"><span class="lab">Theorem 3</span><p><rune>The Gale–Shapley algorithm produces stable marriages.</rune></p></div>
+ <div class="callout proof"><span class="lab">Proof (by contradiction)</span>
+ <p><rune>Suppose there exists a rogue couple formed by b and g.</rune> Let b be married to g\u2032 and g be married to b\u2032 in the Gale–Shapley matching.</p>
+ <p>If b is married to g\u2032 but <b>prefers g to g\u2032</b>, then by <b>Lemma 1</b> boy b must have <rune>courted g before g\u2032</rune>. At that time, <rune>g rejected b</rune>. By <b>Lemma 3</b>, a girl <rune>only rejects a boy in favor of someone she prefers more</rune>. Therefore <rune>g prefers b\u2032 to b</rune>.</p>
+ <p>This means g does <i>not</i> prefer b to her assigned partner, so <rune>b and g do not form a rogue couple — a contradiction.</rune> Hence no rogue couples exist, and the matching is stable.</p></div>
+ <div class="gloss"><span><b>The intuition:</b> for (b,g) to be rogue, b must want g more than his wife g\u2032. But if b wanted g that much, he <i>already serenaded</i> her earlier — and she said no, which she only does when she already has someone better (b\u2032). So g doesn\u2019t want b back. A rogue couple needs <u>both</u> to want each other; one side always fails. No rogue couple can exist.</span></div>
+ <p><b>Notation to fix in your head:</b> primes mean "the actual partner." g\u2032 = b\u2019s wife; b\u2032 = g\u2019s husband. The proof leans entirely on Lemma 1 (boys court better girls first) and Lemma 3 (girls only reject upward).</p>`,
+ board:[
+  {w:'Thm 3: Gale\u2013Shapley produces STABLE marriages.',s:'No rogue couple in the output.'},
+  {w:'Pf (contradiction): suppose (b,g) is rogue.  b\u2013g\u2032 , g\u2013b\u2032  in the matching.',s:'b\u2019s wife is g\u2032; g\u2019s husband is b\u2032.'},
+  {w:'b prefers g to g\u2032 \u21D2 (L1) b courted g before g\u2032 \u21D2 g rejected b.',s:'He must have already tried her and been turned down.'},
+  {w:'(L3) g rejects only for someone better \u21D2 g prefers b\u2032 to b.',s:'So g does NOT prefer b to her partner.'},
+  {w:'\u21D2 (b,g) is not rogue. Contradiction \u21D2 matching is stable. \u220E',s:'A rogue couple needs both to want each other; impossible here.'}
+ ],
+ quiz:[
+  {tier:'recall',type:'mcq',q:'Theorem 3 states the Gale–Shapley algorithm produces…',opts:['stable marriages','boy-pessimal marriages','the unique matching','minimum-regret marriages'],a:0},
+  {tier:'grasp',type:'mcq',q:'In the proof, why must b have already courted g?',opts:['By Lemma 1: if he prefers g to his wife g\u2032, he courted g (the better girl) earlier','By Theorem 1','Because g proposed to him','By symmetry of preferences'],a:0},
+  {tier:'grasp',type:'mcq',q:'Why does g NOT prefer b to her partner b\u2032?',opts:['By Lemma 3, she rejected b only because she already preferred someone (b\u2032)','Because b crossed her off first','Because b is married','Lists have no ties'],a:0},
+  {tier:'prove',type:'order',q:'Order the stability proof:',items:['Suppose (b,g) is a rogue couple; b is wed to g\u2032 and g to b\u2032.','b prefers g to g\u2032, so by Lemma 1 he courted g before g\u2032.','At that time g rejected b.','By Lemma 3 g rejects only for someone she prefers more, so g prefers b\u2032 to b.','Then g doesn\u2019t prefer b to b\u2032 — (b,g) isn\u2019t rogue. Contradiction; the matching is stable.']},
+  {tier:'prove',type:'fill',q:'In the stability proof, if b prefers g to his wife g\', we deduce that b must have courted g earlier. This relies directly on Lemma ___.',a:['1','one'],hint:'a single number'},
+  {tier:'apply',type:'mcq',q:'If b and g are NOT a rogue couple, but it is a known fact that b prefers g to his current wife, what absolute logical necessity must be true about g?',opts:['g must prefer her current husband to b.','g must prefer b to her current husband.','g must be unmarried.','g must have never met b.'],a:0}
+ ]
+},
+{
+ id:'favor',name:'The Court of Favor',fae:'who truly holds the power — proposers or acceptors?',cls:'seelie',cards:['optimal','pessimal'],
+ story:'A shocking truth waits here. The girls seem to win — they keep their favourite suitor each day. Yet you will prove the ritual is secretly, provably tilted toward the boys.',
+ scroll:`
+ <h3>Realm of possibility, optimal &amp; pessimal mates</h3>
+ <p>Let <b>S</b> be the set of all stable matchings for an instance. Gale–Shapley produces one, so <rune>S \u2260 \u2205</rune> (S is non-empty).</p>
+ <div class="callout defn"><span class="lab">Realm of possibility</span><p>For a person p, a person q of the opposite sex is <rune>within the realm of possibility for p if and only if there exists a stable matching in which p is married to q.</rune></p></div>
+ <div class="gloss"><span><b>Plainly:</b> q is a "realistic mate" for p if at least <i>one</i> stable world pairs them. (Brad is <i>not</i> realistic for Alice: any Brad–Alice pairing makes Brad–Angelina rogue, so no stable matching marries them.)</span></div>
+ <div class="callout defn"><span class="lab">Optimal &amp; pessimal mate</span>
+ <p><rune>A person\u2019s optimal mate is their most-preferred partner from the realm of possibility.</rune> <rune>A person\u2019s pessimal mate is their least-preferred partner from the realm of possibility.</rune> Both exist, since at least one stable matching exists.</p></div>
+ <div class="callout thm"><span class="lab">Theorem 4 &amp; Theorem 5 (the shocking pair)</span>
+ <p><rune>The Gale–Shapley algorithm pairs every boy with his optimal mate.</rune><br>
+ <rune>The Gale–Shapley algorithm pairs every girl with her pessimal mate.</rune></p></div>
+ <div class="callout proof"><span class="lab">Proof of Theorem 4 (boys get optimal) — by contradiction</span>
+ <p>Assume some boy doesn\u2019t get his optimal girl. Let <rune>b be the first (in time) boy who gets rejected by his optimal girl g</rune>. Let b\u2032 be the boy who causes g to reject b; then <b>g prefers b\u2032 to b</b>.</p>
+ <p>Since b is the <i>first</i> boy ever rejected by his optimal mate, <rune>b\u2032 has not yet been rejected by his optimal mate</rune> when courting g. So b\u2032 likes g at least as much as his own optimal mate g*.</p>
+ <p>Let M be a stable matching in which b marries g (exists, since g is in b\u2019s realm of possibility). Let g\u2032 be b\u2032\u2019s mate in M. Since b\u2032 likes g* at least as much as g\u2032, he <b>prefers g to g\u2032</b>. Therefore <rune>b\u2032 and g form a rogue couple in M</rune> — contradicting that M is stable.</p></div>
+ <div class="callout proof"><span class="lab">Proof of Theorem 5 (girls get pessimal) — by contradiction</span>
+ <p>Suppose a stable matching M gives some girl g a <i>worse</i> mate than Gale–Shapley does. Let b be g\u2019s Gale–Shapley mate and b\u2032 her mate in M; then <b>g prefers b to b\u2032</b>. Let g\u2032 be b\u2019s mate in M. By <b>Theorem 4</b>, Gale–Shapley gives b his optimal mate, so <b>b prefers g to g\u2032</b>. Then <rune>b and g form a rogue couple in M</rune> — a contradiction.</p></div>
+ <div class="gloss"><span><b>Why this answers "who has the power":</b> proposers (boys) each get the <i>best</i> partner any stable world could give them; acceptors (girls) each get the <i>worst</i>. <rune>The algorithm is heavily biased toward the boys.</rune></span></div>`,
+ board:[
+  {w:'S = all stable matchings; Gale\u2013Shapley gives one \u21D2 S \u2260 \u2205.',s:'So optimal/pessimal mates exist.'},
+  {w:'q in realm of possibility for p  \u21FA  some stable matching marries p to q.',s:'Realistic mates only.'},
+  {w:'optimal = best realistic mate; pessimal = worst realistic mate.',s:'Defined over the realm of possibility.'},
+  {w:'Thm 4: every BOY gets his OPTIMAL mate.  Thm 5: every GIRL gets her PESSIMAL mate.',s:'I prove 4 by "first rejected by optimal \u21D2 rogue couple"; 5 follows from 4.'},
+  {w:'\u2234 the algorithm is heavily biased toward the boys (proposers).',s:'The power answer.'}
+ ],
+ quiz:[
+  {tier:'recall',type:'mcq',q:'A person\u2019s OPTIMAL mate is…',opts:['their most-preferred partner from the realm of possibility','their overall first choice','whoever the algorithm assigns','their pessimal mate\u2019s opposite on the full list'],a:0},
+  {tier:'recall',type:'mcq',q:'Gale–Shapley pairs every boy with his ___ and every girl with her ___.',opts:['optimal; pessimal','pessimal; optimal','first choice; last choice','optimal; optimal'],a:0},
+  {tier:'grasp',type:'mcq',q:'In the Theorem-4 proof, b is chosen as…',opts:['the FIRST boy (in time) rejected by his optimal girl','any boy who is unmarried','the boy with the worst list','the last boy to propose'],a:0},
+  {tier:'prove',type:'order',q:'Order the boy-optimal (Thm 4) proof:',items:['Assume some boy misses his optimal girl; let b be the first ever rejected by his optimal g (by b\u2032).','Since b is first, b\u2032 hasn\u2019t yet been rejected by his optimal mate g*, so b\u2032 likes g \u2265 g*.','Take a stable M where b marries g; let g\u2032 be b\u2032\u2019s mate in M.','b\u2032 likes g* \u2265 g\u2032, hence prefers g to g\u2032.','So (b\u2032,g) is rogue in M — contradiction; every boy gets his optimal mate.']},
+  {tier:'grasp',type:'tf',q:'A boy\'s "optimal mate" is defined as the absolute first girl on his original preference list.',a:false,why:'False. His optimal mate is his most-preferred partner WITHIN the realm of possibility (i.e., someone he can marry in at least one stable matching). That might be his 2nd or 3rd choice.'},
+  {tier:'apply',type:'mcq',q:'In the proof of Theorem 4, we look at the FIRST boy b rejected by his optimal mate g (in favor of b\'). Why is the word "FIRST" mathematically critical?',opts:['It guarantees that b\' has not yet been rejected by his own optimal mate, meaning b\' likes g at least as much as his optimal mate.','It ensures the algorithm terminates quickly.','It proves that b was the best boy overall.','It forces g to marry b\'.'],a:0}
+ ]
+},
+{
+ id:'echoes',name:'The Court of Echoes',fae:'mirror the ritual, and count the many crowns',cls:'unseelie',cards:['echo'],
+ story:'Every ritual casts an echo: run it with the girls courting and a mirror-realm appears. And in some realms the number of stable crowns explodes beyond counting.',
+ scroll:`
+ <h3>Uniqueness, the mirror, and an exponential count</h3>
+ <p>The Gale–Shapley matching is called <rune>boy-optimal and girl-pessimal</rune>. <rune>If the roles of the sexes are interchanged — i.e. if girls court boys — then the resulting stable matching is analogously girl-optimal and boy-pessimal.</rune></p>
+ <div class="callout thm"><span class="lab">Uniqueness</span><p><rune>If the boy-oriented and the girl-oriented versions of the algorithm yield the same stable matching, then (by combining the optimality and pessimality properties) that matching is unique.</rune></p></div>
+ <div class="gloss"><span><b>Why that proves uniqueness:</b> any stable matching sits between boy-optimal (best for boys) and boy-pessimal (worst for boys). If those two extremes coincide, there\u2019s no room left in between — only one stable matching can exist.</span></div>
+ <h3>How many stable matchings can there be?</h3>
+ <p>A systematic search can face an <rune>exponential number of cases</rune>. With n even and a specially-built instance, pair up the boys (b\u2081,b\u2082), (b\u2083,b\u2084), … and let each pair take its <b>first or second choice</b>.</p>
+ <div class="math">number of matchings built this way  =  2^(n/2)</div>
+ <div class="gloss"><span><b>Reading 2^(n/2):</b> "two to the power n-over-two." Each of the n/2 boy-pairs makes an independent 2-way choice (first vs second girl). Multiplying 2 by itself n/2 times gives 2^(n/2) combinations — and <rune>each matching so obtained is stable</rune>. So the count of stable matchings grows exponentially in n.</span></div>
+ <p><b>Why each is stable (one line):</b> <rune>when two boys take their second choice, they cannot get their first choice, because they are the least preferred by the girls in question.</rune></p>`,
+ board:[
+  {w:'Gale\u2013Shapley = boy-optimal & girl-pessimal. Swap roles (girls court) = girl-optimal & boy-pessimal.',s:'Two mirror runs give two extreme stable matchings.'},
+  {w:'Uniqueness: if both versions yield the SAME matching \u21D2 it is the unique stable matching.',s:'The boy-best and boy-worst extremes coincide, leaving no room between.'},
+  {w:'Count: special instance, n even, pair boys; each pair takes 1st or 2nd choice.',s:'Independent binary choice per pair.'},
+  {w:'\u2234 2^(n/2) stable matchings  (exponential).',s:'n/2 pairs \u00D7 2 options each = 2^(n/2); each is stable.'}
+ ],
+ quiz:[
+  {tier:'recall',type:'mcq',q:'Swapping roles so girls court boys yields a matching that is…',opts:['girl-optimal and boy-pessimal','boy-optimal and girl-pessimal','always unique','minimum-egalitarian'],a:0},
+  {tier:'recall',type:'fill',q:'The constructed instance yields how many stable matchings? (expression in n)',a:['2^(n/2)','2^{n/2}','2^n/2','2**(n/2)'],hint:'two to the power n over two'},
+  {tier:'grasp',type:'mcq',q:'When does uniqueness follow immediately?',opts:['When the boy-oriented and girl-oriented runs give the same matching','When n is even','Whenever S \u2260 \u2205','When every boy gets his first choice'],a:0},
+  {tier:'grasp',type:'tf',q:'The number of stable matchings is always small (polynomial in n).',a:false,why:'It can be exponential — the construction gives 2^(n/2) stable matchings.'},
+  {tier:'grasp',type:'fill',q:'If the boy-optimal matching and the girl-optimal matching yield the exact same pairings, then the stable matching is ___.',a:['unique'],hint:'one word'},
+  {tier:'apply',type:'mcq',q:'In the exponential instance with 2^(n/2) matchings, why does a pair of boys taking their second-choice girls NOT create a rogue couple?',opts:['Because those second-choice girls rank those boys lowest, meaning the girls cannot successfully defect to their first choices.','Because the boys are perfectly happy with their second choices.','Because the algorithm forces them to accept it.','Because those girls have empty preference lists.'],a:0}
+ ]
+},
+{
+ id:'balance',name:'The Court of Balance',fae:'three scales weigh a fair crown',cls:'origin',cards:['balance'],
+ story:'The final court. Boy-optimal is also girl-pessimal — neither extreme is fair. Here three scales are forged to weigh a matching\u2019s fairness, and you learn which can be balanced quickly and which never can.',
+ scroll:`
+ <h3>Optimisation criteria for "good" stable matchings</h3>
+ <p>Boy-optimal is simultaneously girl-pessimal (and vice versa), so we seek a matching that is <rune>not only stable but also "good"</rune> by some criterion. First, two position functions:</p>
+ <div class="math">p_b(g) = position of girl g in boy b\u2019s preference list
+p_g(b) = position of boy b in girl g\u2019s preference list</div>
+ <div class="gloss"><span><b>In words:</b> p_b(g) is "what rank g holds on b\u2019s list" (1 = his favourite). p_g(b) is "what rank b holds on g\u2019s list." Small number = high up = happy.</span></div>
+ <h4>1 · Regret cost</h4>
+ <div class="math">r(M) = max over (b,g) in M of  max{ p_b(g) , p_g(b) }</div>
+ <div class="gloss"><span><b>Spoken aloud:</b> for each married couple, take the <i>unhappier</i> of the two partners\u2019 ranks; then take the worst such value over all couples. Regret = "the single most-disappointed person in the whole matching." We want it small.</span></div>
+ <h4>2 · Egalitarian cost</h4>
+ <div class="math">c(M) = \u03A3 over (b,g) in M of p_b(g)  +  \u03A3 over (b,g) in M of p_g(b)</div>
+ <div class="gloss"><span><b>Spoken aloud:</b> add up every boy\u2019s rank for his wife, add up every girl\u2019s rank for her husband, and sum the two totals. Egalitarian = "total disappointment across everyone." Lower = happier realm overall.</span></div>
+ <h4>3 · Sex-equalness cost</h4>
+ <div class="math">d(M) = | \u03A3 p_b(g)  \u2212  \u03A3 p_g(b) |</div>
+ <div class="gloss"><span><b>Spoken aloud:</b> take the boys\u2019 total rank-sum, subtract the girls\u2019 total rank-sum, and take the <i>absolute value</i> (the size, ignoring sign). Sex-equal = "how lopsided the deal is between the two sides." Zero means perfectly balanced.</span></div>
+ <div class="callout thm"><span class="lab">Complexity of the three problems</span>
+ <p>The minimum-regret, minimum-egalitarian, and sex-equal stable-marriage problems ask for a stable M minimising r(M), c(M), d(M) respectively. Although the number of stable matchings can grow exponentially:</p>
+ <ul>
+ <li><rune>Gusfield gave a polynomial-time algorithm for the minimum-regret problem.</rune></li>
+ <li><rune>Irving, Leather and Gusfield gave one for the minimum-egalitarian problem.</rune></li>
+ <li><rune>In contrast, the sex-equal stable matching problem is NP-hard.</rune></li>
+ </ul></div>`,
+ board:[
+  {w:'p_b(g) = rank of g on b\u2019s list;  p_g(b) = rank of b on g\u2019s list.  (1 = favourite)',s:'Position functions — small is happy.'},
+  {w:'Regret  r(M) = max over couples of max{p_b(g), p_g(b)}.',s:'The single unhappiest person; minimise it.'},
+  {w:'Egalitarian  c(M) = \u03A3 p_b(g) + \u03A3 p_g(b).',s:'Total disappointment over everyone.'},
+  {w:'Sex-equal  d(M) = | \u03A3 p_b(g) \u2212 \u03A3 p_g(b) |.',s:'Absolute gap between the two sides\u2019 totals.'},
+  {w:'Regret: poly (Gusfield).  Egalitarian: poly (Irving, Leather, Gusfield).  Sex-equal: NP-hard.',s:'Two are tractable; the fair one is hard.'}
+ ],
+ quiz:[
+  {tier:'recall',type:'mcq',q:'p_b(g) denotes…',opts:['the position of girl g in boy b\u2019s preference list','boy b\u2019s happiness score','the day b proposes to g','girl g\u2019s position in the matching order'],a:0},
+  {tier:'grasp',type:'mcq',q:'Regret cost r(M) is…',opts:['the maximum, over all couples, of the worse of the two partners\u2019 ranks','the total of all ranks','the gap between the sexes\u2019 totals','always zero for stable matchings'],a:0},
+  {tier:'grasp',type:'mcq',q:'Sex-equalness cost d(M) uses absolute value because…',opts:['we care about the SIZE of the gap between the sides, not which side is favoured','ranks can be negative','it must equal the regret','it sums positions'],a:0},
+  {tier:'recall',type:'mcq',q:'Which optimisation problem is NP-hard?',opts:['Sex-equal stable matching','Minimum-regret','Minimum-egalitarian','All three are NP-hard'],a:0},
+  {tier:'apply',type:'mcq',q:'If a stable matching has a Regret cost r(M) = 1, what does this mathematically mean for the realm?',opts:['Every single person is married to their absolute first choice (a perfect utopia).','One person is deeply unhappy.','The matching is maximally unfair to the girls.','The algorithm failed to run.'],a:0},
+  {tier:'prove',type:'tf',q:'Because the sex-equalness cost merely takes the absolute value of the difference, computing the perfectly fair matching (d(M) minimized) can be done efficiently in polynomial time.',a:false,why:'False. Unlike Regret and Egalitarian costs, calculating the minimum Sex-equalness cost is NP-hard.'}
+ ]
+}
+];
+
+/* ===================== ORAL-EXAM TOPICS (boss) ===================== */
+const EXAM=[
+ {topic:'The problem & stability',prompt:'Define the Stable Matching / stable marriage problem at the board: state what you are searching for, define a rogue couple, and define stability.',
+  check:['Name Gale & Shapley, 1962; the goal is a self-enforcing assignment.','Write the setting: n boys, n girls; complete preference lists, no ties.','Define rogue couple: (b,g) prefer each other to their M-partners.','Define stable = no rogue couples; goal = a perfect matching that is stable.'],
+  model:`<h4>Mathematical form</h4><p>n boys, n girls; each side ranks the other completely with no ties. We seek a perfect matching M (everyone paired one-to-one) that is <b>stable</b>.</p><h4>Definitions</h4><p><b>Rogue couple:</b> in matching M, a boy b and girl g are rogue if they prefer each other to their M-partners. <b>Stable:</b> M has no rogue couple. (Equivalently the 1962 stability condition: for every E and every A not assigned to E, E prefers all its hires to A, or A prefers her assignment to E.)</p>`},
+ {topic:'The Gale–Shapley algorithm',prompt:'Present the Gale–Shapley algorithm in full: initial condition, the three daily phases, and the termination rule.',
+  check:['State initial condition: each boy/girl has an ordered list.','Morning: each boy serenades his favourite not-yet-crossed-off girl (else home).','Afternoon: each girl holds her favourite suitor ("maybe"), rejects the rest ("No").','Evening: a rejected boy crosses that girl off.','Termination: first day every girl has \u22641 suitor; girls marry current suitor.'],
+  model:`<h4>What it\u2019s for</h4><p>Produces a stable perfect matching for the two-sided problem (it always exists here). Powers real market design (residency match).</p><h4>The ritual, each day</h4><p><b>Morning</b> each boy serenades his favourite girl not yet crossed off (none left \u2192 home). <b>Afternoon</b> each girl says "maybe, come back tomorrow" to her favourite suitor and "No" to the rest. <b>Evening</b> any boy who heard "No" crosses her off. <b>Stop</b> the first day every girl has at most one suitor; each girl marries her current suitor.</p>`},
+ {topic:'Theorem 1 — termination & running time',prompt:'Prove the Gale–Shapley algorithm terminates, and within how many days.',
+  check:['State the bound: terminates within n²+1 days.','Set up contradiction: suppose it runs past n²+1 days.','Each non-terminating day burns \u22651 cross-off (a girl with \u22652 suitors rejects one).','Total names = n²; can\u2019t cross off more \u2192 contradiction.','Name the technique: progress measure = #names in union of lists.'],
+  model:`<h4>Theorem 1</h4><p>Gale\u2013Shapley terminates within <b>n²+1</b> days. <b>Proof (contradiction):</b> suppose not. Every non-terminating day, some girl has \u22652 suitors, rejects one, who crosses her off — so past n²+1 days more than n² names are crossed off. But the lists together hold only n² names. Contradiction. The progress measure is the total number of names across all boys\u2019 lists.</p>`},
+ {topic:'Everyone is married (Thm 2 + lemmas)',prompt:'State the four lemmas you need and prove that everyone is married.',
+  check:['L1 boy courts every girl he prefers more; L2 unwed boy courted everyone.','L3 girl marries favourite suitor; L4 courted girl always weds.','Thm 2 setup: suppose boy b unwed.','L2 \u2192 all girls courted; L4 \u2192 all girls wed; equal numbers \u2192 all boys wed \u2192 contradiction.'],
+  model:`<h4>Theorem 2</h4><p>Everyone is married. <b>Proof:</b> suppose boy b is unwed. By L2 he courted every girl, so all girls were courted; by L4 all courted girls wed, so all girls are married; with equal numbers of boys and girls, every boy including b must be married — contradiction.</p>`},
+ {topic:'Theorem 3 — stability',prompt:'Prove that the Gale–Shapley algorithm produces a stable matching.',
+  check:['Suppose (b,g) is rogue; b\u2013g\u2032 and g\u2013b\u2032 in the matching.','b prefers g to g\u2032 \u21D2 (L1) he courted g before g\u2032 \u21D2 g rejected b.','(L3) g rejects only upward \u21D2 g prefers b\u2032 to b.','So g doesn\u2019t prefer b to her partner \u2192 not rogue \u2192 contradiction.'],
+  model:`<h4>Theorem 3</h4><p><b>Proof (contradiction):</b> suppose (b,g) is rogue with b wed to g\u2032 and g to b\u2032. Since b prefers g to g\u2032, by Lemma 1 he courted g before g\u2032, where g rejected him. By Lemma 3 a girl only rejects for someone better, so g prefers b\u2032 to b — she doesn\u2019t prefer b to her partner, so (b,g) isn\u2019t rogue. Contradiction; the matching is stable.</p>`},
+ {topic:'Theorems 4 & 5 — who holds the power',prompt:'Define realm of possibility, optimal and pessimal mates, then state and prove boy-optimality.',
+  check:['Define realm of possibility (some stable matching marries p to q).','Define optimal = best realistic mate; pessimal = worst realistic mate.','Thm 4 boys optimal, Thm 5 girls pessimal.','Proof of Thm 4: first boy rejected by optimal g \u2192 rogue couple (b\u2032,g) in a stable M.'],
+  model:`<h4>Theorems 4 & 5</h4><p>q is in p\u2019s <b>realm of possibility</b> iff some stable matching pairs them; <b>optimal/pessimal</b> = best/worst such mate. Gale\u2013Shapley gives every boy his optimal and every girl her pessimal mate. <b>Thm 4 proof:</b> let b be the first boy rejected by his optimal g (by b\u2032). As the first such rejection, b\u2032 hasn\u2019t lost his optimal g*, so he likes g \u2265 g*. In a stable M pairing b\u2013g, b\u2032\u2019s mate g\u2032 satisfies g \u227B g\u2032, so (b\u2032,g) is rogue in M — contradiction. The algorithm is biased toward the boys.</p>`},
+ {topic:'Multiplicity & optimisation criteria',prompt:'Discuss uniqueness, the exponential count of stable matchings, and the three fairness costs with their complexity.',
+  check:['Swap roles \u2192 girl-optimal/boy-pessimal; equal runs \u2192 unique.','Count can be 2^(n/2) — exponential.','Define regret, egalitarian, sex-equal costs (and read each in words).','Regret & egalitarian: polynomial (Gusfield; Irving\u2013Leather\u2013Gusfield). Sex-equal: NP-hard.'],
+  model:`<h4>Multiplicity & fairness</h4><p>Running the mirror (girls court) gives the girl-optimal/boy-pessimal matching; if both runs agree, the stable matching is unique. The count of stable matchings can be 2^(n/2). Fairness costs: regret r(M)=max over couples of max{p_b(g),p_g(b)}; egalitarian c(M)=\u03A3p_b(g)+\u03A3p_g(b); sex-equal d(M)=|\u03A3p_b(g)\u2212\u03A3p_g(b)|. Minimum-regret and minimum-egalitarian are polynomial; sex-equal is NP-hard.</p>`}
+];
+
+/* ===================== STATE ===================== */
+const RANKS=['Page of the Court','Squire of Vows','Knight of the Balcony','Herald of Stability','Courtier of Proof','Warden of the Realm','Regent of Matchings','Sovereign of the Crown'];
+const XP_PER=120;
+let S=Store.get('fae_state')||{xp:0,courts:{},cards:{},boons:{},dailyDate:null,streak:0};
+function save(){Store.set('fae_state',S);}
+function totalCards(){let t=0;COURTS.forEach(c=>t+=c.cards.length);return t;}
+function haveCards(){return Object.keys(S.cards).filter(k=>S.cards[k]).length;}
+function levelOf(){return Math.min(RANKS.length,Math.floor(S.xp/XP_PER)+1);}
+function today(){return new Date().toISOString().slice(0,10);}
+function yesterday(){const d=new Date();d.setDate(d.getDate()-1);return d.toISOString().slice(0,10);}
+function toRoman(n){return ['0','I','II','III','IV','V','VI','VII','VIII','IX','X'][n]||(''+n);}
+
+function addXP(n,reason){S.xp+=n;save();updateHUD();toast('✦ +'+n+' motes',reason||'Motes of mastery gathered.');}
+function updateHUD(){
+  const lv=levelOf();
+  document.getElementById('hud-level').textContent=toRoman(lv)+' · '+RANKS[lv-1].split(' ')[0];
+  const inLv=S.xp-(lv-1)*XP_PER;
+  document.getElementById('hud-xp').style.width=Math.min(100,(inLv/XP_PER)*100)+'%';
+  document.getElementById('hud-xplab').textContent=inLv+' / '+XP_PER+' motes';
+  document.getElementById('hud-streak').textContent='🔥 '+(S.streak||0);
+  document.getElementById('hud-cards').textContent=haveCards()+'/'+totalCards();
+}
+
+/* ===================== TOASTS / BOONS ===================== */
+function toast(title,desc){
+  const wrap=document.getElementById('toasts');
+  const el=document.createElement('div');el.className='toast';
+  el.innerHTML='<div class="tt">'+title+'</div><div class="td">'+desc+'</div>';
+  wrap.appendChild(el);
+  setTimeout(()=>{el.style.transition='opacity .5s';el.style.opacity='0';setTimeout(()=>el.remove(),500);},3800);
+}
+function grantBoon(id){
+  if(S.boons[id])return;
+  const b=BOONS.find(x=>x.id===id);if(!b)return;
+  S.boons[id]=true;save();
+  toast(b.ico+' Boon earned','<b>'+b.name+'</b> — '+b.desc);
+}
+
+/* ===================== MAP ===================== */
+function courtUnlocked(i){return i===0||!!S.courts[COURTS[i-1].id];}
+function renderMap(){
+  const wrap=document.getElementById('courts');wrap.innerHTML='';
+  COURTS.forEach((c,i)=>{
+    const unlocked=courtUnlocked(i),done=!!S.courts[c.id];
+    const node=document.createElement('button');
+    node.className='court-node '+c.cls+(unlocked?'':' locked')+(done?' done':'');
+    node.innerHTML=(done?'<div class="mastery">★</div>':'')+
+      '<div class="num">COURT '+toRoman(i+1)+' · '+c.cards.length+' card'+(c.cards.length>1?'s':'')+'</div>'+
+      '<h3>'+c.name+'</h3><div class="fae">'+c.fae+'</div>'+
+      '<span class="tag '+(done?'done':'todo')+'">'+(done?'Mastered':'Enter')+'</span>'+
+      (unlocked?'':'<div class="lockicon">🔒</div>');
+    node.addEventListener('click',()=>{ if(unlocked)openCourt(i); else toast('🔒 Sealed','Master the '+COURTS[i-1].name+' first.'); });
+    wrap.appendChild(node);
+  });
+  renderDaily();
+}
+
+/* ===================== DAILY REHEARSAL ===================== */
+function renderDaily(){
+  const el=document.getElementById('daily-banner');
+  if(S.dailyDate===today()){
+    el.innerHTML='<div class="di">🌒</div><div class="dtxt"><b>Daily rehearsal complete.</b> Return tomorrow to keep your '+(S.streak||1)+'-day streak alight.</div>';return;
+  }
+  el.innerHTML='<div class="di">🌟</div><div class="dtxt"><b>Daily rehearsal.</b> Recite one card aloud from memory to keep your streak.</div><button class="btn primary" id="daily-go">Begin recital</button>';
+  document.getElementById('daily-go').addEventListener('click',()=>{
+    const owned=Object.keys(S.cards).filter(k=>S.cards[k]);
+    const pool=owned.length?owned:Object.keys(CARDS).slice(0,3);
+    const c=CARDS[pool[Math.floor(Math.random()*pool.length)]];
+    el.innerHTML='<div class="di">🎴</div><div class="dtxt"><b>'+c.name+'</b> — '+c.body+'<br><span style="color:var(--rosy-taupe)">Say it aloud, then confirm.</span></div><button class="btn primary" id="daily-done">I recited it from memory</button>';
+    document.getElementById('daily-done').addEventListener('click',()=>{
+      if(S.dailyDate===yesterday())S.streak=(S.streak||0)+1; else S.streak=1;
+      S.dailyDate=today();save();
+      if((S.streak||0)>=3)grantBoon('streak3');
+      addXP(15,'Daily rehearsal kept.');renderDaily();
+    });
+  });
+}
+
+/* ===================== COURT VIEW ===================== */
+let CUR=0,QI=0,QWRONG=0;
+function show(view){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.getElementById(view).classList.add('active');window.scrollTo({top:0,behavior:'smooth'});}
+function openCourt(i){
+  CUR=i;QI=0;QWRONG=0;
+  const c=COURTS[i],hasGS=(c.id==='ritual');
+  const v=document.getElementById('view-court');
+  const tabs=['Lore','Blackboard'].concat(hasGS?['Run the Ritual']:[]).concat(['Trials']);
+  const trialsIdx=tabs.length-1;
+  v.innerHTML=
+   '<div class="court-head"><button class="btn ghost back" id="court-back">← Map</button>'+
+   '<div class="court-title"><div style="font-family:var(--font-mono);color:var(--gold-deep);letter-spacing:2px;font-size:.7rem">COURT '+toRoman(i+1)+'</div>'+
+   '<h2>'+c.name+'</h2><div class="fae">'+c.fae+'</div></div></div>'+
+   '<div class="story">'+c.story+'</div>'+
+   '<div class="tabs">'+tabs.map((t,j)=>'<button class="tab'+(j===0?' active':'')+'" data-tab="'+j+'">'+t+'</button>').join('')+'</div>'+
+   '<div class="panel active" data-panel="0"><div class="scroll">'+c.scroll+'</div></div>'+
+   '<div class="panel" data-panel="1">'+renderBoard(c)+'</div>'+
+   (hasGS?'<div class="panel" data-panel="2">'+gsShell()+'</div>':'')+
+   '<div class="panel" data-panel="'+trialsIdx+'" id="trials-panel"></div>';
+  document.getElementById('court-back').addEventListener('click',()=>{renderMap();show('view-map');});
+  v.querySelectorAll('.tab').forEach(tb=>tb.addEventListener('click',()=>{
+    v.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    v.querySelectorAll('.panel').forEach(x=>x.classList.remove('active'));
+    tb.classList.add('active');
+    v.querySelector('.panel[data-panel="'+tb.getAttribute('data-tab')+'"]').classList.add('active');
+  }));
+  if(hasGS)initGS();
+  renderTrials();
+  show('view-court');
+}
+function renderBoard(c){
+  let h='<div class="board"><h3>✎ Blackboard rehearsal</h3><div class="board-intro">Write the left column on the board, in order. Speak the right column aloud. This is exactly what to perform.</div>';
+  c.board.forEach((st,k)=>{h+='<div class="board-step"><div class="n">'+(k+1)+'</div><div><div class="board-write">'+st.w+'</div><div class="board-say">'+st.s+'</div></div></div>';});
+  return h+'</div>';
+}
+
+/* ===================== TRIALS ===================== */
+function renderTrials(){
+  const c=COURTS[CUR],panel=document.getElementById('trials-panel');
+  if(QI>=c.quiz.length){
+    completeCourt();
+    panel.innerHTML='<div class="quizwrap" style="text-align:center">'+
+      '<h3 style="color:var(--sunlit)">✦ Court Mastered</h3>'+
+      '<p style="font-size:1.15rem;color:var(--tan)">You may now recite every part of <b>'+c.name+'</b> at the board.</p>'+
+      (c.cards.length?'<p>Card'+(c.cards.length>1?'s':'')+' earned: '+c.cards.map(id=>'<b>'+CARDS[id].name+'</b>').join(', ')+'</p>':'')+
+      '<div style="display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:14px">'+
+      '<button class="btn primary" id="t-map">Return to Map</button>'+
+      (CUR+1<COURTS.length?'<button class="btn" id="t-next">Next Court →</button>':'<button class="btn" id="t-exam">Face the Examiner ⚖</button>')+
+      '<button class="btn ghost" id="t-redo">Re-take trials</button></div></div>';
+    document.getElementById('t-map').onclick=()=>{renderMap();show('view-map');};
+    const nx=document.getElementById('t-next');if(nx)nx.onclick=()=>openCourt(CUR+1);
+    const ex=document.getElementById('t-exam');if(ex)ex.onclick=()=>openExam();
+    document.getElementById('t-redo').onclick=()=>{QI=0;QWRONG=0;renderTrials();};
+    return;
+  }
+  const q=c.quiz[QI];
+  const tierCls={recall:'tier-recall',grasp:'tier-grasp',apply:'tier-apply',prove:'tier-prove'}[q.tier];
+  const tierName={recall:'Recall · word-for-word',grasp:'Understanding',apply:'Apply',prove:'Prove it'}[q.tier];
+  let body='<div class="quizwrap"><div class="qprogress">Trial '+(QI+1)+' / '+c.quiz.length+'<span class="qtier '+tierCls+'">'+tierName+'</span></div><div class="qtext">'+q.q+'</div>';
+  if(q.type==='mcq')body+='<div class="opts">'+q.opts.map((o,k)=>'<button class="opt" data-k="'+k+'">'+o+'</button>').join('')+'</div>';
+  else if(q.type==='tf')body+='<div class="opts"><button class="opt" data-k="1">True</button><button class="opt" data-k="0">False</button></div>';
+  else if(q.type==='fill')body+='<div class="fillrow"><input id="fillin" placeholder="type your answer…" autocomplete="off"><button class="btn primary" id="fillgo">Answer</button></div>'+(q.hint?'<div style="margin-top:6px;color:var(--rosy-taupe);font-size:.9rem">hint: '+q.hint+'</div>':'');
+  else if(q.type==='order')body+='<div class="orderlist" id="orderlist"></div><button class="btn primary" id="ordergo">Lock in order</button>';
+  body+='<div class="feedback" id="fb"></div></div>';
+  panel.innerHTML=body;
+  const fb=document.getElementById('fb');
+  function finish(correct,msg){
+    fb.className='feedback show '+(correct?'good':'bad');
+    fb.innerHTML=(correct?'<b>✓ Correct.</b> ':'<b>✗ Not quite.</b> ')+msg+'<div style="margin-top:10px"><button class="btn primary" id="qnext">'+(QI+1<c.quiz.length?'Next trial →':'Finish court ✦')+'</button></div>';
+    document.getElementById('qnext').onclick=()=>{QI++;renderTrials();};
+    if(correct)addXP(q.tier==='prove'?20:q.tier==='grasp'?12:10,'Trial passed.');else QWRONG++;
+  }
+  if(q.type==='mcq'){
+    panel.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      const k=+b.getAttribute('data-k');
+      panel.querySelectorAll('.opt').forEach(x=>x.disabled=true);
+      panel.querySelectorAll('.opt')[q.a].classList.add('correct');
+      if(k===q.a)finish(true,'');else{b.classList.add('wrong');finish(false,'The answer is: <b>'+q.opts[q.a]+'</b>.');}
+    });
+  }else if(q.type==='tf'){
+    panel.querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+      const val=b.getAttribute('data-k')==='1';
+      panel.querySelectorAll('.opt').forEach(x=>x.disabled=true);
+      const ok=val===q.a;b.classList.add(ok?'correct':'wrong');finish(ok,q.why||'');
+    });
+  }else if(q.type==='fill'){
+    const go=()=>{
+      const raw=document.getElementById('fillin').value;
+      const norm=s=>s.toLowerCase().replace(/\s+/g,' ').trim();
+      const nospace=s=>s.toLowerCase().replace(/\s/g,'');
+      const ok=q.a.some(a=>norm(a)===norm(raw)||nospace(a)===nospace(raw));
+      document.getElementById('fillin').disabled=true;document.getElementById('fillgo').disabled=true;
+      finish(ok,'Accepted answer: <b>'+q.a[0]+'</b>.');
+    };
+    document.getElementById('fillgo').onclick=go;
+    document.getElementById('fillin').addEventListener('keydown',e=>{if(e.key==='Enter')go();});
+    setTimeout(()=>{const f=document.getElementById('fillin');if(f)f.focus();},50);
+  }else if(q.type==='order'){
+    let order=q.items.map((t,idx)=>({idx,t})).sort(()=>Math.random()-0.5);
+    const draw=()=>{
+      const ol=document.getElementById('orderlist');ol.innerHTML='';
+      order.forEach((it,pos)=>{
+        const row=document.createElement('div');row.className='orderitem';
+        row.innerHTML='<div class="mv"><button class="minibtn" data-up="'+pos+'">▲</button><button class="minibtn" data-dn="'+pos+'">▼</button></div><div class="txt">'+it.t+'</div>';
+        ol.appendChild(row);
+      });
+      ol.querySelectorAll('[data-up]').forEach(b=>b.onclick=()=>{const p=+b.getAttribute('data-up');if(p>0){[order[p-1],order[p]]=[order[p],order[p-1]];draw();}});
+      ol.querySelectorAll('[data-dn]').forEach(b=>b.onclick=()=>{const p=+b.getAttribute('data-dn');if(p<order.length-1){[order[p+1],order[p]]=[order[p],order[p+1]];draw();}});
+    };
+    draw();
+    document.getElementById('ordergo').onclick=()=>{
+      const ok=order.every((it,pos)=>it.idx===pos);
+      document.getElementById('ordergo').disabled=true;
+      finish(ok,ok?'Perfectly sequenced.':'Correct order:<br>'+q.items.map((t,k)=>(k+1)+'. '+t).join('<br>'));
+    };
+  }
+}
+function completeCourt(){
+  const c=COURTS[CUR];
+  if(!S.courts[c.id]){
+    S.courts[c.id]=true;
+    c.cards.forEach(id=>{if(!S.cards[id]){S.cards[id]=true;toast('🂠 New card','<b>'+CARDS[id].name+'</b> joins your deck.');}});
+    addXP(40,'Court mastered: '+c.name+'.');
+    grantBoon('first_court');
+    if(c.id==='mirrors')grantBoon('triangle');
+    if(c.id==='balance')grantBoon('balance');
+    if(QWRONG===0)grantBoon('perfect');
+    if(haveCards()>=Math.ceil(totalCards()/2))grantBoon('half_cards');
+    if(haveCards()>=totalCards())grantBoon('all_cards');
+    if(COURTS.every(x=>S.courts[x.id]))grantBoon('sovereign');
+    save();updateHUD();
+  }
+}
+
+/* ===================== GALE–SHAPLEY VISUALIZER ===================== */
+function simulateGS(){
+  const b=GS.boys,g=GS.girls,bp=GS.bp,gp=GS.gp;
+  const crossed={};b.forEach(x=>crossed[x]=new Set());
+  const days=[];let day=0,done=false;
+  while(!done&&day<60){
+    day++;
+    const serenade={};
+    b.forEach(x=>{let t=null;for(const gg of bp[x]){if(!crossed[x].has(gg)){t=gg;break;}}serenade[x]=t;});
+    const suit={};g.forEach(gg=>suit[gg]=[]);
+    b.forEach(x=>{if(serenade[x])suit[serenade[x]].push(x);});
+    const held={},rejected=[];
+    g.forEach(gg=>{
+      if(suit[gg].length===0){held[gg]=null;return;}
+      let best=null,br=Infinity;
+      suit[gg].forEach(x=>{const r=gp[gg].indexOf(x);if(r<br){br=r;best=x;}});
+      held[gg]=best;
+      suit[gg].forEach(x=>{if(x!==best)rejected.push({b:x,g:gg});});
+    });
+    const maxSuit=Math.max.apply(null,g.map(gg=>suit[gg].length));
+    const crossedBefore={};b.forEach(x=>crossedBefore[x]=Array.from(crossed[x]));
+    days.push({day,serenade,suit,held,rejected,crossedBefore,terminal:maxSuit<=1});
+    if(maxSuit<=1)done=true;else rejected.forEach(r=>crossed[r.b].add(r.g));
+  }
+  return days;
+}
+let GS_DAYS=[],GS_AT=0,GS_STEPPED=false;
+function gsShell(){
+  return '<div class="gswrap"><p style="margin-top:0;color:var(--tan);font-size:1.05rem">A worked 4\u00D74 example. Step through it day by day and watch every <b>array and variable</b> change: each boy\u2019s list with cross-offs, who serenades whom, and every girl\u2019s held suitor. This is the complex example to narrate at the board.</p>'+
+    '<div class="gs-controls"><button class="btn" id="gs-restart">⟲ Day 1</button><button class="btn" id="gs-prev">‹ Prev</button><button class="btn primary" id="gs-next">Next day ›</button><div class="gs-day" id="gs-daylabel"></div></div>'+
+    '<div class="gs-narrate" id="gs-narrate"></div>'+
+    '<div class="gs-grid"><div class="gs-col boys" id="gs-boys"></div><div class="gs-col girls" id="gs-girls"></div></div>'+
+    '<div id="gs-state"></div></div>';
+}
+function initGS(){
+  GS_DAYS=simulateGS();GS_AT=0;
+  document.getElementById('gs-restart').onclick=()=>{GS_AT=0;renderGSDay();};
+  document.getElementById('gs-prev').onclick=()=>{if(GS_AT>0){GS_AT--;renderGSDay();}};
+  document.getElementById('gs-next').onclick=()=>{
+    if(GS_AT<GS_DAYS.length-1){GS_AT++;renderGSDay();}
+    if(!GS_STEPPED){GS_STEPPED=true;grantBoon('first_step');}
+    if(GS_DAYS[GS_AT].terminal)grantBoon('terminate');
+  };
+  renderGSDay();
+}
+function renderGSDay(){
+  const d=GS_DAYS[GS_AT],bp=GS.bp,gp=GS.gp;
+  document.getElementById('gs-daylabel').textContent='Day '+d.day+(d.terminal?' · the quiet day':'');
+  document.getElementById('gs-prev').disabled=GS_AT===0;
+  document.getElementById('gs-next').disabled=GS_AT===GS_DAYS.length-1;
+  // boys column
+  let bh='<h4>Seelie court · the boys (proposers)</h4>';
+  GS.boys.forEach(b=>{
+    const cb=d.crossedBefore[b],tgt=d.serenade[b];
+    const wed=d.terminal && Object.keys(d.held).some(g=>d.held[g]===b);
+    const badge=d.terminal?(wed?'<span class="badge wed">married</span>':'<span class="badge home">unwed</span>'):(tgt?'<span class="badge serenade">serenading '+tgt+'</span>':'<span class="badge home">home · homework</span>');
+    const prefs=bp[b].map(g=>{
+      let cls='pref';if(cb.indexOf(g)>=0)cls+=' crossed';if(g===tgt&&!d.terminal)cls+=' current';if(d.terminal&&d.held[g]===b)cls+=' current';
+      return '<span class="'+cls+'">'+g+'</span>';
+    }).join('');
+    bh+='<div class="person"><div class="nm">'+b+' '+badge+'</div><div class="preflist">'+prefs+'</div></div>';
+  });
+  document.getElementById('gs-boys').innerHTML=bh;
+  // girls column
+  let gh='<h4>Unseelie court · the girls (acceptors)</h4>';
+  GS.girls.forEach(g=>{
+    const suit=d.suit[g],held=d.held[g];
+    const badge=d.terminal?(held?'<span class="badge wed">married '+held+'</span>':'<span class="badge home">alone</span>'):(held?'<span class="badge held">holding '+held+'</span>':'<span class="badge home">no suitor</span>');
+    const line=suit.length?suit.map(b=>b===held?'<span class="s-held">'+b+' ✓</span>':'<span class="s-rej">'+b+'</span>').join(' &nbsp; '):'<span style="opacity:.5">— none —</span>';
+    gh+='<div class="person"><div class="nm">'+g+' '+badge+'</div><div class="suitors">suitors today: '+line+'</div></div>';
+  });
+  document.getElementById('gs-girls').innerHTML=gh;
+  // narration
+  const morning=GS.boys.map(b=>d.serenade[b]?(b+'→'+d.serenade[b]):(b+'→home')).join(', ');
+  const afternoon=GS.girls.filter(g=>d.suit[g].length).map(g=>g+' keeps <b>'+d.held[g]+'</b>'+(d.suit[g].length>1?' (rejects '+d.suit[g].filter(b=>b!==d.held[g]).join(', ')+')':'')).join('; ');
+  const evening=d.rejected.length?d.rejected.map(r=>r.b+' crosses off '+r.g).join(', '):'no cross-offs';
+  let narr='<div><span class="phase">Morning</span>'+morning+'</div>'+
+           '<div style="margin-top:6px"><span class="phase">Afternoon</span>'+afternoon+'</div>';
+  if(d.terminal){
+    const marr=GS.girls.map(g=>d.held[g]?(d.held[g]+'–'+g):null).filter(Boolean).join(', ');
+    narr+='<div style="margin-top:8px;color:var(--sunlit)"><b>Every girl has at most one suitor — the ritual ends.</b> Final marriages: '+marr+'.</div>';
+  }else{
+    narr+='<div style="margin-top:6px"><span class="phase">Evening</span>'+evening+'</div>';
+  }
+  document.getElementById('gs-narrate').innerHTML=narr;
+  // state table
+  let st='<table class="statetable"><tr><th>Variable</th><th>State on day '+d.day+'</th></tr>';
+  GS.boys.forEach(b=>{st+='<tr><td>'+b+' · serenades</td><td>'+(d.serenade[b]||'(home)')+'  | crossed: '+(d.crossedBefore[b].join(', ')||'none')+'</td></tr>';});
+  GS.girls.forEach(g=>{st+='<tr><td>'+g+' · holds</td><td>'+(d.held[g]||'(none)')+'</td></tr>';});
+  st+='</table>';
+  document.getElementById('gs-state').innerHTML=st;
+}
+
+/* ===================== CARDS / BOONS MODALS ===================== */
+function cardOrder(){const o=[];COURTS.forEach(c=>c.cards.forEach(id=>o.push(id)));return o;}
+function courtNameForCard(id){const c=COURTS.find(c=>c.cards.indexOf(id)>=0);return c?c.name:'';}
+function renderCards(){
+  const grid=document.getElementById('cardgrid');grid.innerHTML='';
+  cardOrder().forEach(id=>{
+    const c=CARDS[id],have=!!S.cards[id];
+    const el=document.createElement('div');el.className='gcard '+(have?'have':'locked');
+    el.innerHTML='<span class="rarity r-'+c.rar+'">'+c.rar+'</span>'+
+      '<div class="ctype">'+(have?c.type:'sealed card')+'</div>'+
+      '<div class="cname">'+(have?c.name:'? ? ?')+'</div>'+
+      '<div class="cbody">'+(have?c.body:'A card sealed in shadow.')+'</div>'+
+      (have?'':'<div class="lockmsg">Master '+courtNameForCard(id)+'</div>');
+    grid.appendChild(el);
+  });
+}
+function renderBoons(){
+  const list=document.getElementById('boonlist');list.innerHTML='';
+  BOONS.forEach(b=>{
+    const have=!!S.boons[b.id];
+    const el=document.createElement('div');el.className='boon '+(have?'':'locked');
+    el.innerHTML='<div class="ico">'+b.ico+'</div><div><div class="bname">'+b.name+'</div><div class="bdesc">'+b.desc+'</div></div><div class="chk">'+(have?'✓':'🔒')+'</div>';
+    list.appendChild(el);
+  });
+}
+
+/* ===================== ORAL EXAM (boss) ===================== */
+function openExam(){
+  const e=EXAM[Math.floor(Math.random()*EXAM.length)];
+  const body=document.getElementById('exam-body');
+  body.innerHTML='<div style="font-family:var(--font-mono);font-size:.7rem;letter-spacing:2px;color:var(--gold-deep)">TOPIC DRAWN AT RANDOM</div>'+
+    '<div class="exam-q">'+e.prompt+'</div>'+
+    '<p style="color:var(--rosy-taupe)">Recite it aloud at the board first. Then tick every item you actually covered — be honest.</p>'+
+    '<div class="checklist">'+e.check.map((t,k)=>'<label class="check"><input type="checkbox" data-c="'+k+'"><span class="ct">'+t+'</span></label>').join('')+'</div>'+
+    '<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="exam-reveal">Reveal model recitation</button><button class="btn primary" id="exam-grade">Grade my recitation</button><button class="btn ghost" id="exam-again">Draw another topic</button></div>'+
+    '<div class="modelans" id="modelans"><h4>Model recitation</h4>'+e.model+'</div>';
+  document.getElementById('exam-reveal').onclick=()=>document.getElementById('modelans').classList.add('show');
+  document.getElementById('exam-again').onclick=openExam;
+  document.getElementById('exam-grade').onclick=()=>{
+    const boxes=body.querySelectorAll('input[type=checkbox]');
+    const got=Array.from(boxes).filter(b=>b.checked).length,tot=boxes.length;
+    document.getElementById('modelans').classList.add('show');
+    grantBoon('exam_once');
+    if(got===tot)grantBoon('exam_ace');
+    addXP(10+got*8,'Oral exam: '+got+'/'+tot+' covered.');
+    toast('⚖ Examiner\u2019s verdict',got+' of '+tot+' points covered — compare with the model below.');
+  };
+  openModal('exam-modal');
+}
+
+/* ===================== MODALS / NAV ===================== */
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(el){el.classList.remove('open');}
+document.querySelectorAll('[data-close]').forEach(b=>b.onclick=()=>closeModal(b.closest('.modal')));
+document.querySelectorAll('.modal').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)closeModal(m);}));
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.querySelectorAll('.modal.open').forEach(m=>closeModal(m));});
+
+document.getElementById('nav-map').onclick=()=>{renderMap();show('view-map');};
+document.getElementById('nav-cards').onclick=()=>{renderCards();openModal('cards-modal');};
+document.getElementById('nav-boons').onclick=()=>{renderBoons();openModal('boons-modal');};
+document.getElementById('nav-exam').onclick=()=>openExam();
+document.getElementById('nav-reset').onclick=()=>{
+  if(confirm('Erase all progress, cards, boons and streak? This cannot be undone.')){
+    S={xp:0,courts:{},cards:{},boons:{},dailyDate:null,streak:0};save();
+    GS_STEPPED=false;updateHUD();renderMap();show('view-map');
+    toast('↺ Realm reset','Your study quest begins anew.');
+  }
+};
+
+/* ===================== THEME (Seelie / Unseelie) ===================== */
+function applyTheme(name){
+  document.documentElement.setAttribute('data-theme',name);
+  document.querySelectorAll('#theme-toggle .seg').forEach(s=>{
+    s.classList.toggle('active', s.getAttribute('data-theme-choice')===name);
+  });
+  Store.set('fae_theme',name);
+}
+document.querySelectorAll('#theme-toggle .seg').forEach(seg=>{
+  seg.addEventListener('click',()=>applyTheme(seg.getAttribute('data-theme-choice')));
+});
+
+/* ===================== INIT ===================== */
+(function init(){
+  // streak decay if a full day was missed
+  if(S.dailyDate && S.dailyDate<yesterday()){S.streak=0;save();}
+  applyTheme(Store.get('fae_theme')||'dark');
+  updateHUD();renderMap();show('view-map');
+})();
+/* ===================== FAE DUST EFFECT ===================== */
+document.addEventListener('mousemove', (e) => {
+  // Throttle the sparkle creation so it's elegant, not overwhelming
+  if (Math.random() > 0.25) return; 
+
+  const sparkle = document.createElement('div');
+  sparkle.className = 'sparkle';
+  
+  // Offset slightly so it trails behind the cursor
+  const offsetX = (Math.random() - 0.5) * 15;
+  const offsetY = (Math.random() - 0.5) * 15;
+  
+  sparkle.style.left = (e.pageX + offsetX) + 'px';
+  sparkle.style.top = (e.pageY + offsetY) + 'px';
+  
+  document.body.appendChild(sparkle);
+  
+  // Clean up the DOM after the animation finishes
+  setTimeout(() => sparkle.remove(), 800);
+});
+</script>
+</body>
+</html>
